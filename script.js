@@ -1,31 +1,17 @@
 // ============================================================
 // EKITI STATE WOMEN OF INFLUENCE - ADO LG
-// STATIC WEBSITE VERSION
-// ============================================================
-//
-// Expected structure:
-//
-// index.html
-// style.css
-// script.js
-// static/
-//     logo.jpeg
-//
+// FULL STATIC SCRIPT
 // ============================================================
 
 
 // ============================================================
-// SITE INFORMATION
+// SITE CONFIGURATION
 // ============================================================
 
-const SITE_NAME =
-    "EKITI STATE WOMEN OF INFLUENCE";
+const SITE_NAME = "EKITI STATE WOMEN OF INFLUENCE";
+const SITE_LOCATION = "ADO LG";
 
-const SITE_LOCATION =
-    "ADO LG";
-
-const LOGO_PATH =
-    "static/logo.jpeg";
+const LOGO_PATH = "static/logo.jpeg";
 
 
 // ============================================================
@@ -33,33 +19,19 @@ const LOGO_PATH =
 // ============================================================
 
 const wards = [
-
     ["Ado 'A'", "Idofin"],
-
     ["Ado 'B'", "Inisa"],
-
     ["Ado 'C'", "Idolofin"],
-
     ["Ado 'D'", "Ijigbo"],
-
     ["Ado 'E'", "Ijoka / Orereowu"],
-
     ["Ado 'F'", "Okeyinmi"],
-
     ["Ado 'G'", "Oke Ila"],
-
     ["Ado 'H'", "Ereguru"],
-
     ["Ado 'I'", "Dallimore"],
-
     ["Ado 'J'", "Okesa"],
-
     ["Ado 'K'", "Irona"],
-
     ["Ado 'L'", "Igbehin"],
-
     ["Ado 'M'", "Farm Settlement"]
-
 ];
 
 
@@ -68,129 +40,193 @@ const wards = [
 // ============================================================
 
 const offices = [
-
     "Ward Coordinator",
-
     "Deputy Ward Coordinator",
-
     "Secretary",
-
     "Mobilization Officer",
-
     "Women Empowerment Officer",
-
     "Media/Publicity Officer",
-
     "Welfare Officer",
-
     "Polling Unit Officer"
-
 ];
 
 
 // ============================================================
+// STORAGE KEYS
+// ============================================================
+
+const WOMEN_KEY = "ekiti_women_directory";
+const EXCO_KEY = "ekiti_exco_directory";
+const THEME_KEY = "ekiti_theme";
+
+
+// ============================================================
 // PUBLIC WOMEN DIRECTORY
-// ============================================================
 //
-// ONLY PUBLIC INFORMATION should be placed here.
+// IMPORTANT:
+// Public directory stores ONLY names and wards.
 //
-// DO NOT put:
-// - Phone numbers
-// - Bank names
-// - Account numbers
+// Phone numbers
+// Bank names
+// Account numbers
 //
-// Example:
-//
-// const women = [
-//     {
-//         name: "Example Name",
-//         ward: 0
-//     }
-// ];
-//
+// are NOT displayed publicly.
 // ============================================================
 
-const women = [];
+function getWomen() {
 
+    try {
 
-// ============================================================
-// GET HTML ELEMENTS
-// ============================================================
-
-const wardGrid =
-    document.getElementById("wardGrid");
-
-const wardSearch =
-    document.getElementById("wardSearch");
-
-const wardSelect =
-    document.getElementById("wardSelect");
-
-const womanSearch =
-    document.getElementById("womanSearch");
-
-const results =
-    document.getElementById("results");
-
-const excoGrid =
-    document.getElementById("excoGrid");
-
-const modal =
-    document.getElementById("modal");
-
-const modalBody =
-    document.getElementById("modalBody");
-
-const closeModal =
-    document.getElementById("closeModal");
-
-const registerBtn =
-    document.getElementById("registerBtn");
-
-
-// ============================================================
-// SAFE HTML ESCAPE
-// ============================================================
-
-function escapeHTML(value) {
-
-    return String(value ?? "")
-        .replace(
-            /[&<>"']/g,
-            function (character) {
-
-                const characters = {
-
-                    "&": "&amp;",
-                    "<": "&lt;",
-                    ">": "&gt;",
-                    '"': "&quot;",
-                    "'": "&#039;"
-
-                };
-
-                return characters[character];
-
-            }
+        return JSON.parse(
+            localStorage.getItem(WOMEN_KEY) || "[]"
         );
+
+    } catch {
+
+        return [];
+
+    }
+}
+
+
+function saveWomen(data) {
+
+    localStorage.setItem(
+        WOMEN_KEY,
+        JSON.stringify(data)
+    );
 
 }
 
 
 // ============================================================
-// LOGO HELPER
+// EXCO STORAGE
 // ============================================================
 
-function getLogoHTML(className = "logo") {
+function getExco() {
 
-    return `
+    try {
 
-        <img
-            src="${LOGO_PATH}"
-            class="${className}"
-            alt="${escapeHTML(SITE_NAME)} Logo"
-            onerror="this.style.display='none'"
-        >
+        return JSON.parse(
+            localStorage.getItem(EXCO_KEY) || "[]"
+        );
+
+    } catch {
+
+        return [];
+
+    }
+
+}
+
+
+function saveExco(data) {
+
+    localStorage.setItem(
+        EXCO_KEY,
+        JSON.stringify(data)
+    );
+
+}
+
+
+// ============================================================
+// SECURITY
+// ============================================================
+
+function escapeHTML(value) {
+
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+}
+
+
+// ============================================================
+// FIND WARD
+// ============================================================
+
+function getWard(index) {
+
+    return wards[Number(index)] || null;
+
+}
+
+
+function getWardName(index) {
+
+    const ward = getWard(index);
+
+    return ward
+        ? ward[0]
+        : "Unknown Ward";
+
+}
+
+
+function getWardArea(index) {
+
+    const ward = getWard(index);
+
+    return ward
+        ? ward[1]
+        : "";
+
+}
+
+
+// ============================================================
+// DOM HELPERS
+// ============================================================
+
+function getElement(id) {
+
+    return document.getElementById(id);
+
+}
+
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+
+function setupNavigation() {
+
+    const navigation =
+        getElement("navigation");
+
+    if (!navigation) return;
+
+
+    navigation.innerHTML = `
+
+        <a href="#home">
+            🏠 Home
+        </a>
+
+        <a href="#wards">
+            🏘️ Wards
+        </a>
+
+        <a href="#register">
+            📝 Register
+        </a>
+
+        <a href="#search">
+            🔎 Search
+        </a>
+
+        <a href="#exco">
+            👥 EXCO
+        </a>
+
+        <a href="#settings">
+            ⚙️ Settings
+        </a>
 
     `;
 
@@ -198,28 +234,308 @@ function getLogoHTML(className = "logo") {
 
 
 // ============================================================
-// DISPLAY THE 13 WARDS
+// MOBILE MENU
+// ============================================================
+
+function toggleMenu() {
+
+    const navigation =
+        getElement("navigation");
+
+    if (!navigation) return;
+
+    navigation.classList.toggle("open");
+
+}
+
+
+// ============================================================
+// CLOSE MOBILE MENU
+// ============================================================
+
+document.addEventListener(
+    "click",
+    function(event) {
+
+        const navigation =
+            getElement("navigation");
+
+        const menuButton =
+            document.querySelector(".menu-btn");
+
+        if (!navigation) return;
+
+        if (
+            navigation.classList.contains("open") &&
+            !navigation.contains(event.target) &&
+            !menuButton?.contains(event.target)
+        ) {
+
+            navigation.classList.remove("open");
+
+        }
+
+    }
+);
+
+
+// ============================================================
+// HOME PAGE
+// ============================================================
+
+function renderHome() {
+
+    const app =
+        getElement("app");
+
+    if (!app) return;
+
+
+    const women =
+        getWomen();
+
+
+    app.innerHTML = `
+
+        <section class="hero">
+
+            <img
+                src="${LOGO_PATH}"
+                class="logo"
+                alt="Ekiti State Women of Influence Logo"
+            >
+
+            <h2>
+                ${SITE_NAME}
+            </h2>
+
+            <h3>
+                ${SITE_LOCATION}
+            </h3>
+
+            <p>
+                Women registration, ward directory
+                and structured ward leadership.
+            </p>
+
+            <br>
+
+            <a
+                href="#register"
+                class="button"
+            >
+                📝 Register a Woman
+            </a>
+
+            <a
+                href="#search"
+                class="button secondary"
+            >
+                🔎 Search Directory
+            </a>
+
+        </section>
+
+
+        <div class="stats">
+
+            <div class="stat">
+
+                <div class="stat-icon">
+                    🏘️
+                </div>
+
+                <div class="stat-number">
+                    13
+                </div>
+
+                <div class="stat-label">
+                    Wards
+                </div>
+
+            </div>
+
+
+            <div class="stat">
+
+                <div class="stat-icon">
+                    👩
+                </div>
+
+                <div class="stat-number">
+                    ${women.length}
+                </div>
+
+                <div class="stat-label">
+                    Registered Women
+                </div>
+
+            </div>
+
+
+            <div class="stat">
+
+                <div class="stat-icon">
+                    👥
+                </div>
+
+                <div class="stat-number">
+                    104
+                </div>
+
+                <div class="stat-label">
+                    Ward Offices
+                </div>
+
+            </div>
+
+
+            <div class="stat">
+
+                <div class="stat-icon">
+                    🏛️
+                </div>
+
+                <div class="stat-number">
+                    8
+                </div>
+
+                <div class="stat-label">
+                    Offices / Ward
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <section class="card">
+
+            <h2>
+                📝 Register With Us
+            </h2>
+
+            <p>
+                Register your information under
+                your appropriate ward.
+            </p>
+
+            <a
+                href="#register"
+                class="button"
+            >
+                Register Now →
+            </a>
+
+        </section>
+
+
+        <section class="card">
+
+            <h2>
+                🏘️ Ado LG Ward Directory
+            </h2>
+
+            <p>
+                View the 13 wards and their
+                structured offices.
+            </p>
+
+            <a
+                href="#wards"
+                class="button"
+            >
+                View Wards
+            </a>
+
+        </section>
+
+    `;
+
+}
+
+
+// ============================================================
+// WARDS PAGE
+// ============================================================
+
+function renderWards() {
+
+    const app =
+        getElement("app");
+
+    if (!app) return;
+
+
+    app.innerHTML = `
+
+        <div class="card">
+
+            <h2>
+                🏘️ Ado LG Wards
+            </h2>
+
+            <input
+                id="wardSearch"
+                placeholder="Search wards..."
+            >
+
+        </div>
+
+
+        <div
+            id="wardGrid"
+            class="grid"
+        ></div>
+
+    `;
+
+
+    displayWards();
+
+
+    const search =
+        getElement("wardSearch");
+
+
+    if (search) {
+
+        search.addEventListener(
+            "input",
+            function() {
+
+                displayWards(
+                    search.value
+                );
+
+            }
+        );
+
+    }
+
+}
+
+
+// ============================================================
+// DISPLAY WARDS
 // ============================================================
 
 function displayWards(filter = "") {
 
-    if (!wardGrid) {
-        return;
-    }
+    const grid =
+        getElement("wardGrid");
 
-    wardGrid.innerHTML = "";
+    if (!grid) return;
+
+
+    grid.innerHTML = "";
+
 
     wards.forEach(
-        function (ward, index) {
-
-            const wardName =
-                ward[0];
-
-            const area =
-                ward[1];
+        function(ward, index) {
 
             const searchText =
-                `${wardName} ${area}`
+                `${ward[0]} ${ward[1]}`
                     .toLowerCase();
 
 
@@ -239,156 +555,37 @@ function displayWards(filter = "") {
                 document.createElement("div");
 
             card.className =
-                "ward-card";
+                "card ward-card";
 
 
             card.innerHTML = `
 
-                <div class="number">
-
+                <div class="ward-number">
                     ${index + 1}
-
                 </div>
 
-                <h3>
-
-                    ${escapeHTML(wardName)}
-
-                </h3>
-
-                <p>
-
-                    ${escapeHTML(area)}
-
-                </p>
-
-            `;
-
-
-            card.addEventListener(
-                "click",
-                function () {
-
-                    openWard(index);
-
-                }
-            );
-
-
-            wardGrid.appendChild(card);
-
-        }
-    );
-
-}
-
-
-// ============================================================
-// CREATE WARD SELECT OPTIONS
-// ============================================================
-
-function populateWardSelect() {
-
-    if (!wardSelect) {
-        return;
-    }
-
-    wardSelect.innerHTML = `
-
-        <option value="">
-            All Wards
-        </option>
-
-    `;
-
-
-    wards.forEach(
-        function (ward, index) {
-
-            const option =
-                document.createElement(
-                    "option"
-                );
-
-
-            option.value =
-                index;
-
-
-            option.textContent =
-                `WARD ${index + 1} - ${ward[0]} – ${ward[1]}`;
-
-
-            wardSelect.appendChild(
-                option
-            );
-
-        }
-    );
-
-}
-
-
-// ============================================================
-// DISPLAY EXCO
-// ============================================================
-
-function displayExco() {
-
-    if (!excoGrid) {
-        return;
-    }
-
-    excoGrid.innerHTML = "";
-
-
-    wards.forEach(
-        function (ward, index) {
-
-            const card =
-                document.createElement(
-                    "div"
-                );
-
-
-            card.className =
-                "exco-card";
-
-
-            card.innerHTML = `
-
-                <div class="number">
-
-                    ${index + 1}
-
-                </div>
-
-                <h3>
-
+                <h2>
                     ${escapeHTML(ward[0])}
-
-                </h3>
+                </h2>
 
                 <p>
-
                     ${escapeHTML(ward[1])}
-
                 </p>
 
-                <p>
-
-                    <strong>
-                        8 Structured Offices
-                    </strong>
-
+                <p class="small">
+                    8 Structured Offices
                 </p>
+
+                <button>
+                    View Ward →
+                </button>
 
             `;
 
 
             card.addEventListener(
                 "click",
-                function () {
+                function() {
 
                     openWard(index);
 
@@ -396,9 +593,7 @@ function displayExco() {
             );
 
 
-            excoGrid.appendChild(
-                card
-            );
+            grid.appendChild(card);
 
         }
     );
@@ -407,233 +602,37 @@ function displayExco() {
 
 
 // ============================================================
-// OPEN WARD DETAILS
+// REGISTER PAGE
 // ============================================================
 
-function openWard(index) {
+function renderRegister() {
 
-    const ward =
-        wards[index];
+    const app =
+        getElement("app");
 
+    if (!app) return;
 
-    if (!ward) {
-        return;
-    }
 
-
-    const wardName =
-        ward[0];
-
-    const area =
-        ward[1];
-
-
-    let html = `
-
-        ${getLogoHTML("logo")}
-
-        <small>
-            WARD ${index + 1}
-        </small>
-
-        <h2>
-
-            ${escapeHTML(wardName)}
-            –
-            ${escapeHTML(area)}
-
-        </h2>
-
-        <p class="privacy">
-
-            EKITI STATE WOMEN OF INFLUENCE
-            - ADO LG
-
-        </p>
-
-        <h3>
-            Structured Ward Offices
-        </h3>
-
-    `;
-
-
-    offices.forEach(
-        function (office) {
-
-            html += `
-
-                <div class="office">
-
-                    <strong>
-
-                        ${escapeHTML(office)}
-
-                    </strong>
-
-                    <span>
-
-                        Not Assigned
-
-                    </span>
-
-                </div>
-
-            `;
-
-        }
-    );
-
-
-    if (
-        modalBody &&
-        modal
-    ) {
-
-        modalBody.innerHTML =
-            html;
-
-        modal.classList.add(
-            "show"
-        );
-
-    }
-
-}
-
-
-// ============================================================
-// SEARCH WOMEN
-// ============================================================
-
-function searchWomen() {
-
-    if (
-        !womanSearch ||
-        !wardSelect ||
-        !results
-    ) {
-
-        return;
-
-    }
-
-
-    const query =
-        womanSearch.value
-            .trim()
-            .toLowerCase();
-
-
-    const selectedWard =
-        wardSelect.value;
-
-
-    const matches =
-        women.filter(
-            function (woman) {
-
-                const name =
-                    String(
-                        woman.name
-                    ).toLowerCase();
-
-
-                const nameMatches =
-                    !query ||
-                    name.includes(
-                        query
-                    );
-
-
-                const wardMatches =
-                    selectedWard === "" ||
-                    String(
-                        woman.ward
-                    ) === selectedWard;
-
-
-                return (
-                    nameMatches &&
-                    wardMatches
-                );
-
-            }
-        );
-
-
-    if (
-        matches.length === 0
-    ) {
-
-        results.innerHTML = `
-
-            <p class="privacy">
-
-                No public names have been
-                added or no matching name
-                was found.
-
-            </p>
-
-        `;
-
-        return;
-
-    }
-
-
-    results.innerHTML =
-        matches
+    const wardOptions =
+        wards
             .map(
-                function (woman) {
-
-                    const ward =
-                        wards[
-                            Number(
-                                woman.ward
-                            )
-                        ];
-
-
-                    if (!ward) {
-                        return "";
-                    }
-
+                function(ward, index) {
 
                     return `
 
-                        <div class="result">
+                        <option value="${index}">
 
-                            <strong>
+                            ${escapeHTML(
+                                ward[0]
+                            )}
 
-                                ${escapeHTML(
-                                    woman.name
-                                )}
+                            –
 
-                            </strong>
+                            ${escapeHTML(
+                                ward[1]
+                            )}
 
-                            <br>
-
-                            <span>
-
-                                WARD
-                                ${Number(woman.ward) + 1}
-
-                                -
-                                ${escapeHTML(
-                                    ward[0]
-                                )}
-
-                                –
-
-                                ${escapeHTML(
-                                    ward[1]
-                                )}
-
-                            </span>
-
-                        </div>
+                        </option>
 
                     `;
 
@@ -641,137 +640,32 @@ function searchWomen() {
             )
             .join("");
 
-}
 
+    app.innerHTML = `
 
-// ============================================================
-// REGISTRATION STORAGE
-// ============================================================
-//
-// Private registration data is stored separately from
-// the public women directory.
-//
-// ============================================================
+        <div class="card form-card">
 
-function getRegistrations() {
-
-    try {
-
-        return JSON.parse(
-            localStorage.getItem(
-                "ekitiWomenRegistrations"
-            ) || "[]"
-        );
-
-    }
-
-    catch (error) {
-
-        console.error(
-            "Could not read registrations:",
-            error
-        );
-
-        return [];
-
-    }
-
-}
-
-
-function saveRegistrations(
-    registrations
-) {
-
-    localStorage.setItem(
-        "ekitiWomenRegistrations",
-        JSON.stringify(
-            registrations
-        )
-    );
-
-}
-
-
-// ============================================================
-// CREATE REGISTRATION MODAL
-// ============================================================
-
-function createRegistrationModal() {
-
-    let existing =
-        document.getElementById(
-            "registerModal"
-        );
-
-
-    if (existing) {
-
-        existing.classList.add(
-            "show"
-        );
-
-        return;
-
-    }
-
-
-    const registerModal =
-        document.createElement(
-            "div"
-        );
-
-
-    registerModal.id =
-        "registerModal";
-
-
-    registerModal.className =
-        "modal";
-
-
-    registerModal.innerHTML = `
-
-        <div class="modal-content">
-
-            <div class="modal-header">
-
-                <div>
-
-                    <h2>
-                        📝 Registration
-                    </h2>
-
-                    <p class="small">
-
-                        EKITI STATE WOMEN OF
-                        INFLUENCE - ADO LG
-
-                    </p>
-
-                </div>
-
-                <button
-                    type="button"
-                    id="closeRegister"
-                >
-                    ✕
-                </button>
-
-            </div>
-
-
-            <div id="registrationMessage"></div>
-
-
-            <form
-                id="registrationForm"
+            <img
+                src="${LOGO_PATH}"
+                class="logo"
+                alt="Logo"
             >
 
-                <label for="registerWard">
+            <h2>
+                📝 WOMAN REGISTRATION
+            </h2>
 
+            <p>
+                ${SITE_NAME}, ${SITE_LOCATION}
+            </p>
+
+            <div id="registerMessage"></div>
+
+
+            <form id="registerForm">
+
+                <label>
                     Ward
-
                 </label>
 
                 <select
@@ -780,100 +674,59 @@ function createRegistrationModal() {
                 >
 
                     <option value="">
-
                         Select Ward
-
                     </option>
 
-                    ${wards.map(
-                        function (
-                            ward,
-                            index
-                        ) {
-
-                            return `
-
-                                <option
-                                    value="${index}"
-                                >
-
-                                    WARD
-                                    ${index + 1}
-                                    -
-                                    ${escapeHTML(
-                                        ward[0]
-                                    )}
-                                    –
-                                    ${escapeHTML(
-                                        ward[1]
-                                    )}
-
-                                </option>
-
-                            `;
-
-                        }
-                    ).join("")}
+                    ${wardOptions}
 
                 </select>
 
 
-                <label for="registerName">
-
+                <label>
                     Name
-
                 </label>
 
                 <input
                     id="registerName"
                     type="text"
-                    placeholder="Full Name"
-                    autocomplete="name"
+                    placeholder="Full name"
                     required
                 >
 
 
-                <label for="registerPhone">
-
+                <label>
                     Phone No
-
                 </label>
 
                 <input
                     id="registerPhone"
                     type="tel"
-                    placeholder="Phone Number"
-                    autocomplete="tel"
+                    placeholder="Phone number"
                     required
                 >
 
 
-                <label for="registerBank">
-
+                <label>
                     Bank Name
-
                 </label>
 
                 <input
                     id="registerBank"
                     type="text"
-                    placeholder="Bank Name"
+                    placeholder="Bank name"
                     required
                 >
 
 
-                <label for="registerAccount">
-
+                <label>
                     Account No
-
                 </label>
 
                 <input
                     id="registerAccount"
                     type="text"
                     inputmode="numeric"
-                    placeholder="Account Number"
-                    maxlength="10"
+                    placeholder="Account number"
                     required
                 >
 
@@ -884,9 +737,7 @@ function createRegistrationModal() {
                     type="submit"
                     class="primary"
                 >
-
                     📝 Submit Registration
-
                 </button>
 
             </form>
@@ -896,61 +747,11 @@ function createRegistrationModal() {
     `;
 
 
-    document.body.appendChild(
-        registerModal
-    );
-
-
-    const closeRegister =
-        document.getElementById(
-            "closeRegister"
-        );
-
-
-    closeRegister.addEventListener(
-        "click",
-        function () {
-
-            registerModal.classList.remove(
-                "show"
-            );
-
-        }
-    );
-
-
-    registerModal.addEventListener(
-        "click",
-        function (event) {
-
-            if (
-                event.target ===
-                registerModal
-            ) {
-
-                registerModal.classList.remove(
-                    "show"
-                );
-
-            }
-
-        }
-    );
-
-
-    document
-        .getElementById(
-            "registrationForm"
-        )
-        .addEventListener(
+    getElement("registerForm")
+        ?.addEventListener(
             "submit",
             submitRegistration
         );
-
-
-    registerModal.classList.add(
-        "show"
-    );
 
 }
 
@@ -959,113 +760,50 @@ function createRegistrationModal() {
 // SUBMIT REGISTRATION
 // ============================================================
 
-function submitRegistration(
-    event
-) {
+function submitRegistration(event) {
 
     event.preventDefault();
 
 
     const ward =
-        document
-            .getElementById(
-                "registerWard"
-            )
-            .value;
+        getElement("registerWard")?.value;
 
 
     const name =
-        document
-            .getElementById(
-                "registerName"
-            )
-            .value
+        getElement("registerName")
+            ?.value
             .trim();
 
 
     const phone =
-        document
-            .getElementById(
-                "registerPhone"
-            )
-            .value
+        getElement("registerPhone")
+            ?.value
             .trim();
 
 
     const bank =
-        document
-            .getElementById(
-                "registerBank"
-            )
-            .value
+        getElement("registerBank")
+            ?.value
             .trim();
 
 
     const account =
-        document
-            .getElementById(
-                "registerAccount"
-            )
-            .value
+        getElement("registerAccount")
+            ?.value
             .trim();
 
 
-    // ------------------------------------------
-    // VALIDATION
-    // ------------------------------------------
-
-    if (!ward) {
-
-        alert(
-            "Please select a ward."
-        );
-
-        return;
-
-    }
-
-
-    if (!name) {
-
-        alert(
-            "Please enter the woman's name."
-        );
-
-        return;
-
-    }
-
-
-    if (!phone) {
-
-        alert(
-            "Please enter a phone number."
-        );
-
-        return;
-
-    }
-
-
-    if (!bank) {
-
-        alert(
-            "Please enter the bank name."
-        );
-
-        return;
-
-    }
-
-
     if (
-        !/^\d{10}$/.test(
-            account
-        )
+        ward === "" ||
+        !name ||
+        !phone ||
+        !bank ||
+        !account
     ) {
 
-        alert(
-            "Account number must contain exactly 10 digits."
+        showRegisterMessage(
+            "Please complete all fields.",
+            "error"
         );
 
         return;
@@ -1073,41 +811,26 @@ function submitRegistration(
     }
 
 
-    // ------------------------------------------
-    // LOAD REGISTRATIONS
-    // ------------------------------------------
-
-    const registrations =
-        getRegistrations();
+    const women =
+        getWomen();
 
 
-    // ------------------------------------------
-    // CREATE REGISTRATION
-    // ------------------------------------------
-
-    const registration = {
+    const newWoman = {
 
         id:
-            Date.now() +
-            Math.random(),
+            Date.now(),
 
-        name:
-            name,
-
-        phone:
-            phone,
-
-        bankName:
-            bank,
-
-        accountNo:
-            account,
+        name,
 
         ward:
             Number(ward),
 
-        status:
-            "pending",
+        // Private fields
+        phone,
+
+        bank,
+
+        account,
 
         createdAt:
             new Date().toISOString()
@@ -1115,222 +838,467 @@ function submitRegistration(
     };
 
 
-    registrations.push(
-        registration
+    women.push(
+        newWoman
     );
 
 
-    saveRegistrations(
-        registrations
+    saveWomen(
+        women
     );
 
 
-    // ------------------------------------------
-    // SUCCESS MESSAGE
-    // ------------------------------------------
+    showRegisterMessage(
+        `
+            Registration submitted successfully.
+            <br><br>
+            Your information has been recorded.
+        `,
+        "success"
+    );
 
-    const message =
-        document.getElementById(
-            "registrationMessage"
+
+    getElement("registerForm")
+        ?.reset();
+
+}
+
+
+// ============================================================
+// REGISTER MESSAGE
+// ============================================================
+
+function showRegisterMessage(
+    message,
+    type = "success"
+) {
+
+    const box =
+        getElement("registerMessage");
+
+    if (!box) return;
+
+
+    box.innerHTML = `
+
+        <div class="${
+            type === "success"
+                ? "success-box"
+                : "error"
+        }">
+
+            ${message}
+
+        </div>
+
+    `;
+
+}
+
+
+// ============================================================
+// SEARCH PAGE
+// ============================================================
+
+function renderSearch() {
+
+    const app =
+        getElement("app");
+
+    if (!app) return;
+
+
+    const wardOptions =
+        wards
+            .map(
+                function(ward, index) {
+
+                    return `
+
+                        <option value="${index}">
+
+                            ${escapeHTML(
+                                ward[0]
+                            )}
+
+                            –
+
+                            ${escapeHTML(
+                                ward[1]
+                            )}
+
+                        </option>
+
+                    `;
+
+                }
+            )
+            .join("");
+
+
+    app.innerHTML = `
+
+        <div class="card">
+
+            <h2>
+                🔎 Search Women
+            </h2>
+
+            <p class="small">
+
+                Public search displays names
+                and wards only.
+
+            </p>
+
+
+            <label>
+                Woman's Name
+            </label>
+
+            <input
+                id="womanSearch"
+                placeholder="Search by woman's name..."
+            >
+
+
+            <label>
+                Ward
+            </label>
+
+            <select id="wardSelect">
+
+                <option value="">
+                    All Wards
+                </option>
+
+                ${wardOptions}
+
+            </select>
+
+        </div>
+
+
+        <div
+            class="card"
+            id="results"
+        >
+
+            <h2>
+                Search Results
+            </h2>
+
+            <p class="privacy small">
+
+                Search for a registered woman.
+
+            </p>
+
+        </div>
+
+    `;
+
+
+    getElement("womanSearch")
+        ?.addEventListener(
+            "input",
+            searchWomen
         );
 
 
-    if (message) {
+    getElement("wardSelect")
+        ?.addEventListener(
+            "change",
+            searchWomen
+        );
 
-        message.innerHTML = `
 
-            <div class="success-box">
+    searchWomen();
 
-                ✅ Registration submitted
-                successfully.
+}
 
-                <br><br>
 
-                Your registration is now
-                waiting for approval.
+// ============================================================
+// SEARCH WOMEN
+// ============================================================
+
+function searchWomen() {
+
+    const results =
+        getElement("results");
+
+    const search =
+        getElement("womanSearch");
+
+    const wardSelect =
+        getElement("wardSelect");
+
+
+    if (
+        !results ||
+        !search ||
+        !wardSelect
+    ) {
+
+        return;
+
+    }
+
+
+    const query =
+        search.value
+            .trim()
+            .toLowerCase();
+
+
+    const selectedWard =
+        wardSelect.value;
+
+
+    const women =
+        getWomen();
+
+
+    const matches =
+        women.filter(
+            function(woman) {
+
+                const name =
+                    String(
+                        woman.name
+                    )
+                    .toLowerCase();
+
+
+                const nameMatch =
+                    !query ||
+                    name.includes(query);
+
+
+                const wardMatch =
+                    selectedWard === "" ||
+                    Number(woman.ward) ===
+                    Number(selectedWard);
+
+
+                return (
+                    nameMatch &&
+                    wardMatch
+                );
+
+            }
+        );
+
+
+    if (!matches.length) {
+
+        results.innerHTML = `
+
+            <h2>
+                Search Results
+            </h2>
+
+            <div class="notice">
+
+                No matching public name
+                was found.
 
             </div>
 
         `;
 
-    }
-
-
-    // ------------------------------------------
-    // RESET
-    // ------------------------------------------
-
-    document
-        .getElementById(
-            "registrationForm"
-        )
-        .reset();
-
-}
-
-
-// ============================================================
-// OPEN REGISTRATION
-// ============================================================
-
-function openRegistration() {
-
-    createRegistrationModal();
-
-}
-
-
-// ============================================================
-// REGISTER BUTTON
-// ============================================================
-
-if (registerBtn) {
-
-    registerBtn.addEventListener(
-        "click",
-        openRegistration
-    );
-
-}
-
-
-// ============================================================
-// CLOSE MAIN MODAL
-// ============================================================
-
-if (closeModal) {
-
-    closeModal.addEventListener(
-        "click",
-        function () {
-
-            if (modal) {
-
-                modal.classList.remove(
-                    "show"
-                );
-
-            }
-
-        }
-    );
-
-}
-
-
-// ============================================================
-// CLOSE MAIN MODAL OUTSIDE
-// ============================================================
-
-if (modal) {
-
-    modal.addEventListener(
-        "click",
-        function (event) {
-
-            if (
-                event.target ===
-                modal
-            ) {
-
-                modal.classList.remove(
-                    "show"
-                );
-
-            }
-
-        }
-    );
-
-}
-
-
-// ============================================================
-// ESCAPE KEY
-// ============================================================
-
-document.addEventListener(
-    "keydown",
-    function (event) {
-
-        if (
-            event.key !== "Escape"
-        ) {
-
-            return;
-
-        }
-
-
-        if (modal) {
-
-            modal.classList.remove(
-                "show"
-            );
-
-        }
-
-
-        const registerModal =
-            document.getElementById(
-                "registerModal"
-            );
-
-
-        if (registerModal) {
-
-            registerModal.classList.remove(
-                "show"
-            );
-
-        }
-
-
-        const aiModal =
-            document.getElementById(
-                "aiModal"
-            );
-
-
-        if (aiModal) {
-
-            aiModal.classList.add(
-                "hidden"
-            );
-
-        }
-
-
-        const settingsModal =
-            document.getElementById(
-                "settingsModal"
-            );
-
-
-        if (settingsModal) {
-
-            settingsModal.classList.add(
-                "hidden"
-            );
-
-        }
+        return;
 
     }
-);
+
+
+    results.innerHTML = `
+
+        <h2>
+            Search Results
+        </h2>
+
+        ${matches
+            .map(
+                function(woman) {
+
+                    return `
+
+                        <div class="result">
+
+                            <div class="result-name">
+
+                                ${escapeHTML(
+                                    woman.name
+                                )}
+
+                            </div>
+
+                            <div>
+
+                                🏘️
+                                ${escapeHTML(
+                                    getWardName(
+                                        woman.ward
+                                    )
+                                )}
+
+                                –
+
+                                ${escapeHTML(
+                                    getWardArea(
+                                        woman.ward
+                                    )
+                                )}
+
+                            </div>
+
+                        </div>
+
+                    `;
+
+                }
+            )
+            .join("")}
+
+    `;
+
+}
 
 
 // ============================================================
-// WARD SEARCH
+// EXCO PAGE
 // ============================================================
 
-if (wardSearch) {
+function renderExco() {
 
-    wardSearch.addEventListener(
-        "input",
-        function (event) {
+    const app =
+        getElement("app");
 
-            displayWards(
-                event.target.value
+    if (!app) return;
+
+
+    app.innerHTML = `
+
+        <div class="card">
+
+            <h2>
+                👥 WARD LEADERSHIP
+            </h2>
+
+            <p>
+                Structured Ward Offices
+            </p>
+
+            <p class="small">
+
+                8 offices are structured
+                for every ward.
+
+            </p>
+
+        </div>
+
+
+        <div
+            id="excoGrid"
+            class="grid"
+        ></div>
+
+    `;
+
+
+    displayExco();
+
+}
+
+
+// ============================================================
+// DISPLAY EXCO
+// ============================================================
+
+function displayExco() {
+
+    const grid =
+        getElement("excoGrid");
+
+    if (!grid) return;
+
+
+    grid.innerHTML = "";
+
+
+    wards.forEach(
+        function(ward, index) {
+
+            const card =
+                document.createElement(
+                    "div"
+                );
+
+
+            card.className =
+                "card ward-card";
+
+
+            card.innerHTML = `
+
+                <div class="ward-number">
+
+                    ${index + 1}
+
+                </div>
+
+
+                <h2>
+
+                    ${escapeHTML(
+                        ward[0]
+                    )}
+
+                </h2>
+
+
+                <p>
+
+                    ${escapeHTML(
+                        ward[1]
+                    )}
+
+                </p>
+
+
+                <strong>
+
+                    8 Structured Offices
+
+                </strong>
+
+
+                <br><br>
+
+
+                <button>
+
+                    View EXCO →
+
+                </button>
+
+            `;
+
+
+            card.addEventListener(
+                "click",
+                function() {
+
+                    openWard(index);
+
+                }
+            );
+
+
+            grid.appendChild(
+                card
             );
 
         }
@@ -1340,103 +1308,449 @@ if (wardSearch) {
 
 
 // ============================================================
-// WOMEN SEARCH
+// OPEN WARD
 // ============================================================
 
-if (womanSearch) {
+function openWard(index) {
 
-    womanSearch.addEventListener(
-        "input",
-        searchWomen
-    );
-
-}
+    if (!wards[index]) return;
 
 
-// ============================================================
-// WARD FILTER
-// ============================================================
-
-if (wardSelect) {
-
-    wardSelect.addEventListener(
-        "change",
-        searchWomen
-    );
-
-}
+    const ward =
+        wards[index];
 
 
-// ============================================================
-// MOBILE MENU
-// ============================================================
+    const savedExco =
+        getExco();
 
-function toggleMenu() {
 
-    const navigation =
-        document.getElementById(
-            "navigation"
+    const wardExco =
+        savedExco.filter(
+            function(item) {
+
+                return Number(
+                    item.ward
+                ) === Number(index);
+
+            }
         );
 
 
-    if (!navigation) {
-        return;
+    let officeHTML = "";
+
+
+    offices.forEach(
+        function(office) {
+
+            const found =
+                wardExco.find(
+                    function(item) {
+
+                        return (
+                            item.office ===
+                            office
+                        );
+
+                    }
+                );
+
+
+            officeHTML += `
+
+                <div class="exco">
+
+                    <div class="exco-position">
+
+                        ${escapeHTML(
+                            office
+                        )}
+
+                    </div>
+
+                    <strong>
+
+                        ${escapeHTML(
+                            found
+                                ? found.name
+                                : "Not Assigned"
+                        )}
+
+                    </strong>
+
+                </div>
+
+            `;
+
+        }
+    );
+
+
+    const women =
+        getWomen()
+            .filter(
+                function(woman) {
+
+                    return Number(
+                        woman.ward
+                    ) === Number(index);
+
+                }
+            );
+
+
+    let womenHTML = "";
+
+
+    if (!women.length) {
+
+        womenHTML = `
+
+            <div class="notice">
+
+                No public names registered
+                for this ward yet.
+
+            </div>
+
+        `;
+
+    } else {
+
+        womenHTML =
+            women
+                .map(
+                    function(woman, number) {
+
+                        return `
+
+                            <div class="exco">
+
+                                <strong>
+
+                                    ${number + 1}.
+                                    ${escapeHTML(
+                                        woman.name
+                                    )}
+
+                                </strong>
+
+                            </div>
+
+                        `;
+
+                    }
+                )
+                .join("");
+
     }
 
 
-    navigation.classList.toggle(
-        "open"
+    const app =
+        getElement("app");
+
+
+    app.innerHTML = `
+
+        <div class="top-actions">
+
+            <a
+                href="#wards"
+                class="button secondary"
+            >
+                ← Back to Wards
+            </a>
+
+        </div>
+
+
+        <div class="hero">
+
+            <img
+                src="${LOGO_PATH}"
+                class="logo"
+                alt="Logo"
+            >
+
+            <h2>
+
+                ${escapeHTML(
+                    ward[0]
+                )}
+
+            </h2>
+
+            <p>
+
+                ${escapeHTML(
+                    ward[1]
+                )}
+
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <h2>
+                👥 Ward EXCO
+            </h2>
+
+            <p class="small">
+
+                Structured offices for Ward
+                ${index + 1}.
+
+            </p>
+
+
+            ${officeHTML}
+
+        </div>
+
+
+        <div class="card">
+
+            <h2>
+                👩 Registered Women
+            </h2>
+
+            <p class="small">
+
+                Public directory displays
+                names only.
+
+            </p>
+
+
+            ${womenHTML}
+
+        </div>
+
+    `;
+
+
+    window.scrollTo(
+        0,
+        0
     );
 
 }
 
 
 // ============================================================
-// DARK MODE / SETTINGS
+// SETTINGS PAGE
 // ============================================================
 
-function changeTheme(theme) {
+function renderSettings() {
 
-    if (
-        theme === "dark"
-    ) {
+    const app =
+        getElement("app");
+
+    if (!app) return;
+
+
+    const savedTheme =
+        localStorage.getItem(
+            THEME_KEY
+        ) || "system";
+
+
+    app.innerHTML = `
+
+        <div class="card form-card">
+
+            <h2>
+                ⚙️ Settings
+            </h2>
+
+
+            <label>
+                Appearance
+            </label>
+
+
+            <select
+                id="themeSelect"
+            >
+
+                <option
+                    value="system"
+                    ${savedTheme === "system"
+                        ? "selected"
+                        : ""}
+                >
+                    System
+                </option>
+
+
+                <option
+                    value="light"
+                    ${savedTheme === "light"
+                        ? "selected"
+                        : ""}
+                >
+                    Light
+                </option>
+
+
+                <option
+                    value="dark"
+                    ${savedTheme === "dark"
+                        ? "selected"
+                        : ""}
+                >
+                    Dark
+                </option>
+
+            </select>
+
+
+            <br><br>
+
+
+            <button
+                id="saveThemeButton"
+                class="primary"
+            >
+                Save Appearance
+            </button>
+
+
+            <hr>
+
+
+            <h3>
+                🤖 AI Assistant
+            </h3>
+
+
+            <p class="small">
+
+                Test your local Ollama
+                connection.
+
+            </p>
+
+
+            <label>
+                Ollama URL
+            </label>
+
+
+            <input
+                id="ollamaURL"
+                value="http://localhost:11434"
+            >
+
+
+            <label>
+                Model
+            </label>
+
+
+            <input
+                id="ollamaModel"
+                value="qwen2.5-coder:7b"
+            >
+
+
+            <br>
+
+
+            <button
+                id="testAIButton"
+                class="primary"
+            >
+                🔌 Test AI Connection
+            </button>
+
+
+            <div
+                id="aiResult"
+                class="notice"
+            >
+                AI connection has not been tested.
+            </div>
+
+        </div>
+
+    `;
+
+
+    getElement(
+        "saveThemeButton"
+    )?.addEventListener(
+        "click",
+        function() {
+
+            const theme =
+                getElement(
+                    "themeSelect"
+                ).value;
+
+
+            localStorage.setItem(
+                THEME_KEY,
+                theme
+            );
+
+
+            applyTheme(
+                theme
+            );
+
+        }
+    );
+
+
+    getElement(
+        "testAIButton"
+    )?.addEventListener(
+        "click",
+        testAIConnection
+    );
+
+}
+
+
+// ============================================================
+// DARK MODE
+// ============================================================
+
+function applyTheme(theme) {
+
+    if (theme === "dark") {
 
         document.body.classList.add(
             "dark"
         );
 
+        return;
+
     }
 
-    else if (
-        theme === "light"
-    ) {
+
+    if (theme === "light") {
 
         document.body.classList.remove(
             "dark"
         );
 
-    }
-
-    else {
-
-        const prefersDark =
-            window.matchMedia &&
-            window.matchMedia(
-                "(prefers-color-scheme: dark)"
-            ).matches;
-
-
-        document.body.classList.toggle(
-            "dark",
-            prefersDark
-        );
+        return;
 
     }
 
 
-    localStorage.setItem(
-        "ekiti_theme",
-        theme
+    const dark =
+        window.matchMedia(
+            "(prefers-color-scheme: dark)"
+        ).matches;
+
+
+    document.body.classList.toggle(
+        "dark",
+        dark
     );
 
 }
@@ -1444,301 +1758,67 @@ function changeTheme(theme) {
 
 function loadTheme() {
 
-    const savedTheme =
+    const theme =
         localStorage.getItem(
-            "ekiti_theme"
+            THEME_KEY
         ) || "system";
 
 
-    changeTheme(
-        savedTheme
-    );
-
-
-    const select =
-        document.getElementById(
-            "themeSelect"
-        );
-
-
-    if (select) {
-
-        select.value =
-            savedTheme;
-
-    }
-
-}
-
-
-function openSettings() {
-
-    const settingsModal =
-        document.getElementById(
-            "settingsModal"
-        );
-
-
-    if (!settingsModal) {
-        return;
-    }
-
-
-    settingsModal.classList.remove(
-        "hidden"
-    );
-
-}
-
-
-function closeSettings() {
-
-    const settingsModal =
-        document.getElementById(
-            "settingsModal"
-        );
-
-
-    if (!settingsModal) {
-        return;
-    }
-
-
-    settingsModal.classList.add(
-        "hidden"
+    applyTheme(
+        theme
     );
 
 }
 
 
 // ============================================================
-// OLLAMA SETTINGS
-// ============================================================
-
-function getOllamaURL() {
-
-    return (
-        localStorage.getItem(
-            "ollamaURL"
-        ) ||
-        "http://localhost:11434"
-    );
-
-}
-
-
-function getOllamaModel() {
-
-    return (
-        localStorage.getItem(
-            "ollamaModel"
-        ) ||
-        "qwen2.5-coder:7b"
-    );
-
-}
-
-
-function saveSettings() {
-
-    const urlInput =
-        document.getElementById(
-            "ollamaURL"
-        );
-
-    const modelInput =
-        document.getElementById(
-            "ollamaModel"
-        );
-
-
-    if (urlInput) {
-
-        localStorage.setItem(
-            "ollamaURL",
-            urlInput.value.trim()
-        );
-
-    }
-
-
-    if (modelInput) {
-
-        localStorage.setItem(
-            "ollamaModel",
-            modelInput.value.trim()
-        );
-
-    }
-
-
-    const themeSelect =
-        document.getElementById(
-            "themeSelect"
-        );
-
-
-    if (themeSelect) {
-
-        changeTheme(
-            themeSelect.value
-        );
-
-    }
-
-
-    closeSettings();
-
-
-    showToast(
-        "Settings saved successfully."
-    );
-
-}
-
-
-// ============================================================
-// LOAD OLLAMA SETTINGS INTO FORM
-// ============================================================
-
-function loadOllamaSettings() {
-
-    const urlInput =
-        document.getElementById(
-            "ollamaURL"
-        );
-
-    const modelInput =
-        document.getElementById(
-            "ollamaModel"
-        );
-
-
-    if (urlInput) {
-
-        urlInput.value =
-            getOllamaURL();
-
-    }
-
-
-    if (modelInput) {
-
-        modelInput.value =
-            getOllamaModel();
-
-    }
-
-}
-
-
-// ============================================================
-// AI MODAL
-// ============================================================
-
-function openAI() {
-
-    const aiModal =
-        document.getElementById(
-            "aiModal"
-        );
-
-
-    if (!aiModal) {
-        return;
-    }
-
-
-    aiModal.classList.remove(
-        "hidden"
-    );
-
-
-    const input =
-        document.getElementById(
-            "aiInput"
-        );
-
-
-    if (input) {
-
-        setTimeout(
-            function () {
-
-                input.focus();
-
-            },
-            100
-        );
-
-    }
-
-}
-
-
-function closeAI() {
-
-    const aiModal =
-        document.getElementById(
-            "aiModal"
-        );
-
-
-    if (!aiModal) {
-        return;
-    }
-
-
-    aiModal.classList.add(
-        "hidden"
-    );
-
-}
-
-
-// ============================================================
-// AI STATUS
-// ============================================================
-
-function setAIStatus(
-    text
-) {
-
-    const status =
-        document.getElementById(
-            "aiStatus"
-        );
-
-
-    if (status) {
-
-        status.textContent =
-            text;
-
-    }
-
-}
-
-
-// ============================================================
-// AI CONNECTION TEST
+// AI CONNECTION
 // ============================================================
 
 async function testAIConnection() {
 
-    setAIStatus(
-        "🟡 Connecting..."
-    );
+    const result =
+        getElement("aiResult");
+
+
+    const urlInput =
+        getElement("ollamaURL");
+
+
+    const modelInput =
+        getElement("ollamaModel");
+
+
+    const url =
+        (
+            urlInput?.value ||
+            "http://localhost:11434"
+        )
+        .trim()
+        .replace(/\/+$/, "");
+
+
+    const model =
+        (
+            modelInput?.value ||
+            "qwen2.5-coder:7b"
+        )
+        .trim();
+
+
+    if (result) {
+
+        result.innerHTML =
+            "🔄 Testing Ollama connection...";
+
+    }
 
 
     try {
 
         const response =
             await fetch(
-                `${getOllamaURL()}/api/tags`,
-                {
-                    method: "GET"
-                }
+                `${url}/api/tags`
             );
 
 
@@ -1756,51 +1836,71 @@ async function testAIConnection() {
 
 
         const models =
-            data.models || [];
+            Array.isArray(
+                data.models
+            )
+                ? data.models
+                : [];
 
 
-        const modelExists =
+        const exists =
             models.some(
-                function (model) {
+                function(item) {
 
                     return (
-                        model.name ===
-                        getOllamaModel()
+                        item.name === model
                     );
 
                 }
             );
 
 
-        if (modelExists) {
+        if (result) {
 
-            setAIStatus(
-                "🟢 Ollama connected"
-            );
+            result.innerHTML = exists
+
+                ? `
+                    🟢 <strong>Connected!</strong>
+                    <br>
+                    Model <strong>${escapeHTML(
+                        model
+                    )}</strong> is available.
+                `
+
+                : `
+                    🟡 Ollama is connected,
+                    but <strong>${escapeHTML(
+                        model
+                    )}</strong>
+                    was not found.
+                `;
 
         }
 
-        else {
 
-            setAIStatus(
-                "🟠 Connected, model not found"
-            );
+    } catch(error) {
+
+        if (result) {
+
+            result.innerHTML = `
+
+                🔴 <strong>
+                    AI connection failed.
+                </strong>
+
+                <br><br>
+
+                ${escapeHTML(
+                    error.message
+                )}
+
+                <br><br>
+
+                Make sure Ollama is running.
+
+            `;
 
         }
-
-    }
-
-    catch (error) {
-
-        console.error(
-            "AI connection error:",
-            error
-        );
-
-
-        setAIStatus(
-            "🔴 Ollama unavailable"
-        );
 
     }
 
@@ -1811,130 +1911,28 @@ async function testAIConnection() {
 // AI CHAT
 // ============================================================
 
-let aiController =
-    null;
+async function askAI(prompt) {
+
+    const url =
+        localStorage.getItem(
+            "ollama_url"
+        ) ||
+        "http://localhost:11434";
 
 
-async function sendAIMessage() {
-
-    const input =
-        document.getElementById(
-            "aiInput"
-        );
-
-
-    const messages =
-        document.getElementById(
-            "aiMessages"
-        );
-
-
-    if (
-        !input ||
-        !messages
-    ) {
-
-        return;
-
-    }
-
-
-    const prompt =
-        input.value.trim();
-
-
-    if (!prompt) {
-        return;
-    }
-
-
-    // User message
-    const userMessage =
-        document.createElement(
-            "div"
-        );
-
-
-    userMessage.className =
-        "ai-message user";
-
-
-    userMessage.innerHTML = `
-
-        <strong>
-            You
-        </strong>
-
-        <p>
-            ${escapeHTML(prompt)}
-        </p>
-
-    `;
-
-
-    messages.appendChild(
-        userMessage
-    );
-
-
-    input.value = "";
-
-
-    // Assistant message
-    const assistantMessage =
-        document.createElement(
-            "div"
-        );
-
-
-    assistantMessage.className =
-        "ai-message assistant";
-
-
-    assistantMessage.innerHTML = `
-
-        <strong>
-            🤖 AI
-        </strong>
-
-        <p class="ai-response">
-            Thinking...
-        </p>
-
-    `;
-
-
-    messages.appendChild(
-        assistantMessage
-    );
-
-
-    messages.scrollTop =
-        messages.scrollHeight;
-
-
-    const responseElement =
-        assistantMessage.querySelector(
-            ".ai-response"
-        );
-
-
-    setAIStatus(
-        "🟡 AI is thinking..."
-    );
-
-
-    aiController =
-        new AbortController();
+    const model =
+        localStorage.getItem(
+            "ollama_model"
+        ) ||
+        "qwen2.5-coder:7b";
 
 
     try {
 
         const response =
             await fetch(
-                `${getOllamaURL()}/api/generate`,
+                `${url}/api/generate`,
                 {
-
                     method: "POST",
 
                     headers: {
@@ -1942,21 +1940,16 @@ async function sendAIMessage() {
                             "application/json"
                     },
 
-                    body: JSON.stringify({
+                    body:
+                        JSON.stringify({
 
-                        model:
-                            getOllamaModel(),
+                            model,
 
-                        prompt:
                             prompt,
 
-                        stream:
-                            true
+                            stream: false
 
-                    }),
-
-                    signal:
-                        aiController.signal
+                        })
 
                 }
             );
@@ -1965,359 +1958,239 @@ async function sendAIMessage() {
         if (!response.ok) {
 
             throw new Error(
-                `Ollama error: HTTP ${response.status}`
+                `Ollama HTTP ${response.status}`
             );
 
         }
 
 
-        if (!response.body) {
-
-            throw new Error(
-                "No response body received."
-            );
-
-        }
+        const data =
+            await response.json();
 
 
-        responseElement.textContent =
-            "";
+        return (
+            data.response ||
+            "No response received."
+        );
 
 
-        const reader =
-            response.body.getReader();
+    } catch(error) {
+
+        return `
+            ❌ AI Error:
+            ${error.message}
+        `;
+
+    }
+
+}
 
 
-        const decoder =
-            new TextDecoder(
-                "utf-8"
-            );
+// ============================================================
+// SAVE AI SETTINGS
+// ============================================================
+
+function saveAISettings() {
+
+    const url =
+        getElement("ollamaURL")
+            ?.value
+            .trim();
 
 
-        let buffer = "";
+    const model =
+        getElement("ollamaModel")
+            ?.value
+            .trim();
 
 
-        while (true) {
+    if (url) {
 
-            const {
-                value,
-                done
-            } =
-                await reader.read();
-
-
-            if (done) {
-                break;
-            }
-
-
-            buffer +=
-                decoder.decode(
-                    value,
-                    {
-                        stream: true
-                    }
-                );
-
-
-            const lines =
-                buffer.split("\n");
-
-
-            buffer =
-                lines.pop() || "";
-
-
-            for (
-                const line of lines
-            ) {
-
-                if (!line.trim()) {
-                    continue;
-                }
-
-
-                try {
-
-                    const data =
-                        JSON.parse(
-                            line
-                        );
-
-
-                    if (data.response) {
-
-                        responseElement.textContent +=
-                            data.response;
-
-
-                        messages.scrollTop =
-                            messages.scrollHeight;
-
-                    }
-
-
-                }
-
-                catch (
-                    parseError
-                ) {
-
-                    console.warn(
-                        "Could not parse Ollama response:",
-                        line
-                    );
-
-                }
-
-            }
-
-        }
-
-
-        setAIStatus(
-            "🟢 Ready"
+        localStorage.setItem(
+            "ollama_url",
+            url.replace(/\/+$/, "")
         );
 
     }
 
-    catch (error) {
+
+    if (model) {
+
+        localStorage.setItem(
+            "ollama_model",
+            model
+        );
+
+    }
+
+}
+
+
+// ============================================================
+// ROUTER
+// ============================================================
+
+function router() {
+
+    const route =
+        location.hash
+            .replace("#", "")
+            .trim()
+            .toLowerCase();
+
+
+    setupNavigation();
+
+
+    if (!route) {
+
+        renderHome();
+
+    }
+
+    else if (
+        route === "home"
+    ) {
+
+        renderHome();
+
+    }
+
+    else if (
+        route === "wards"
+    ) {
+
+        renderWards();
+
+    }
+
+    else if (
+        route === "register"
+    ) {
+
+        renderRegister();
+
+    }
+
+    else if (
+        route === "search"
+    ) {
+
+        renderSearch();
+
+    }
+
+    else if (
+        route === "exco"
+    ) {
+
+        renderExco();
+
+    }
+
+    else if (
+        route === "settings"
+    ) {
+
+        renderSettings();
+
+    }
+
+    else if (
+        route.startsWith("ward-")
+    ) {
+
+        const id =
+            Number(
+                route.replace(
+                    "ward-",
+                    ""
+                )
+            );
+
 
         if (
-            error.name ===
-            "AbortError"
+            Number.isInteger(id) &&
+            id >= 0 &&
+            id < wards.length
         ) {
 
-            responseElement.textContent =
-                "⛔ Response stopped.";
+            openWard(id);
 
-            setAIStatus(
-                "⛔ Stopped"
-            );
+        } else {
 
-        }
-
-        else {
-
-            console.error(
-                "AI Error:",
-                error
-            );
-
-
-            responseElement.textContent =
-                `❌ AI Error: ${error.message}`;
-
-
-            setAIStatus(
-                "🔴 AI Error"
-            );
+            renderHome();
 
         }
 
     }
 
-    finally {
+    else {
 
-        aiController =
-            null;
-
-    }
-
-}
-
-
-// ============================================================
-// STOP AI
-// ============================================================
-
-function stopAI() {
-
-    if (aiController) {
-
-        aiController.abort();
-
-        aiController =
-            null;
+        renderHome();
 
     }
 
-}
 
-
-// ============================================================
-// CLEAR AI CHAT
-// ============================================================
-
-function clearAIChat() {
-
-    const messages =
-        document.getElementById(
-            "aiMessages"
-        );
-
-
-    if (!messages) {
-        return;
-    }
-
-
-    messages.innerHTML = `
-
-        <div class="ai-message assistant">
-
-            <strong>
-                🤖 AI
-            </strong>
-
-            <p>
-
-                Hello! I'm your AI assistant.
-                How can I help?
-
-            </p>
-
-        </div>
-
-    `;
-
-
-    setAIStatus(
-        "🟢 Ready"
+    window.scrollTo(
+        0,
+        0
     );
 
 }
 
 
 // ============================================================
-// TOAST
+// SYSTEM THEME CHANGE
 // ============================================================
 
-function showToast(
-    message
-) {
+window
+    .matchMedia(
+        "(prefers-color-scheme: dark)"
+    )
+    .addEventListener(
+        "change",
+        function() {
 
-    const toast =
-        document.getElementById(
-            "toast"
-        );
-
-
-    if (!toast) {
-        return;
-    }
-
-
-    toast.textContent =
-        message;
+            const theme =
+                localStorage.getItem(
+                    THEME_KEY
+                ) || "system";
 
 
-    toast.classList.add(
-        "show"
+            if (
+                theme === "system"
+            ) {
+
+                applyTheme(
+                    "system"
+                );
+
+            }
+
+        }
     );
-
-
-    setTimeout(
-        function () {
-
-            toast.classList.remove(
-                "show"
-            );
-
-        },
-        2500
-    );
-
-}
 
 
 // ============================================================
 // INITIALIZE
 // ============================================================
 
-function initializeWebsite() {
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
 
-    displayWards();
+        loadTheme();
 
-    populateWardSelect();
+        setupNavigation();
 
-    displayExco();
+        router();
 
-    searchWomen();
-
-    loadTheme();
-
-    loadOllamaSettings();
-
-}
+    }
+);
 
 
-// ============================================================
-// DOM READY
-// ============================================================
-
-if (
-    document.readyState ===
-    "loading"
-) {
-
-    document.addEventListener(
-        "DOMContentLoaded",
-        initializeWebsite
-    );
-
-}
-
-else {
-
-    initializeWebsite();
-
-}
-
-
-// ============================================================
-// GLOBAL FUNCTIONS
-// ============================================================
-//
-// These make the functions available to
-// onclick="" attributes in index.html.
-//
-
-window.toggleMenu =
-    toggleMenu;
-
-window.openWard =
-    openWard;
-
-window.openRegistration =
-    openRegistration;
-
-window.openAI =
-    openAI;
-
-window.closeAI =
-    closeAI;
-
-window.sendAIMessage =
-    sendAIMessage;
-
-window.testAIConnection =
-    testAIConnection;
-
-window.clearAIChat =
-    clearAIChat;
-
-window.stopAI =
-    stopAI;
-
-window.openSettings =
-    openSettings;
-
-window.closeSettings =
-    closeSettings;
-
-window.saveSettings =
-    saveSettings;
-
-window.changeTheme =
-    changeTheme;
+window.addEventListener(
+    "hashchange",
+    router
+);
