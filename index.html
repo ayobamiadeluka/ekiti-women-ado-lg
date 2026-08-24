@@ -1,124 +1,55 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <title>Ekiti State Women of Influence | Ado LG</title>
 
-    <meta
-        name="description"
-        content="Ekiti State Women of Influence - Ado LG"
-    >
-
-    <title>
-        Ekiti State Women of Influence | Ado LG
-    </title>
-
-    <link
-        rel="stylesheet"
-        href="style.css"
-    >
-
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<!-- ======================================================
-     HEADER
-====================================================== -->
-
 <header class="header">
 
     <div class="brand">
+        <img src="static/logo.jpeg" alt="Ekiti State Women of Influence Logo">
 
-        <img
-            src="static/logo.jpeg"
-            alt="Ekiti State Women of Influence Logo"
-        >
-
-        <div class="brand-text">
-
-            <h1>
-                EKITI STATE WOMEN OF INFLUENCE
-            </h1>
-
-            <span>
-                ADO LG
-            </span>
-
+        <div>
+            <h1>EKITI STATE WOMEN OF INFLUENCE</h1>
+            <span>ADO LG</span>
         </div>
-
     </div>
 
-
     <button
-        id="menuBtn"
         class="menu-btn"
-        type="button"
+        id="menuBtn"
         aria-label="Open menu"
     >
         ☰
     </button>
 
-
     <nav id="navigation">
 
-        <a href="#home">
-            🏠 Home
-        </a>
+        <a href="#home">🏠 Home</a>
 
-        <a href="#register">
-            📝 Register
-        </a>
+        <a href="#register">📝 Register</a>
 
-        <a href="#search">
-            🔎 Search
-        </a>
+        <a href="#search">🔎 Search</a>
 
-        <a href="#exco">
-            👥 EXCO
-        </a>
-
-        <a href="#settings">
-            ⚙️ Settings
-        </a>
-
-        <a
-            href="#login"
-            id="adminNav"
-        >
-            🔐 Admin
-        </a>
+        <a href="#exco">👥 EXCO</a>
 
     </nav>
 
 </header>
 
 
-<!-- ======================================================
-     MAIN APP
-====================================================== -->
-
 <main id="app"></main>
 
 
-<!-- ======================================================
-     TOAST
-====================================================== -->
-
-<div
-    id="toast"
-    class="toast"
-></div>
-
-
-<!-- ======================================================
-     MODAL
-====================================================== -->
+<!-- WARD MODAL -->
 
 <div
     id="modal"
@@ -129,14 +60,11 @@
 
         <div class="modal-header">
 
-            <h2 id="modalTitle">
-                Ward
-            </h2>
+            <h2>Ward Information</h2>
 
             <button
                 id="closeModal"
                 class="close-btn"
-                type="button"
             >
                 ✕
             </button>
@@ -150,122 +78,10 @@
 </div>
 
 
-<!-- ======================================================
-     AI MODAL
-====================================================== -->
-
-<div
-    id="aiModal"
-    class="modal hidden"
->
-
-    <div class="modal-content ai-modal">
-
-        <div class="modal-header">
-
-            <h2>
-                🤖 AI Assistant
-            </h2>
-
-            <button
-                id="closeAI"
-                class="close-btn"
-                type="button"
-            >
-                ✕
-            </button>
-
-        </div>
-
-
-        <div class="ai-toolbar">
-
-            <span id="aiStatus">
-                🟡 Not connected
-            </span>
-
-            <button
-                id="testAI"
-                type="button"
-            >
-                🔌 Test Connection
-            </button>
-
-            <button
-                id="clearAI"
-                type="button"
-            >
-                🧹 Clear
-            </button>
-
-            <button
-                id="stopAI"
-                type="button"
-                class="danger"
-            >
-                ⛔ Stop
-            </button>
-
-        </div>
-
-
-        <div
-            id="aiMessages"
-            class="ai-messages"
-        >
-
-            <div class="ai-message assistant">
-
-                <strong>
-                    🤖 AI
-                </strong>
-
-                <p>
-                    Hello! I'm your AI assistant.
-                    Ask me something about the website,
-                    coding, or anything else.
-                </p>
-
-            </div>
-
-        </div>
-
-
-        <div class="ai-input-area">
-
-            <textarea
-                id="aiInput"
-                rows="3"
-                placeholder="Ask the AI..."
-            ></textarea>
-
-            <button
-                id="sendAI"
-                class="primary"
-                type="button"
-            >
-                Send ➤
-            </button>
-
-        </div>
-
-    </div>
-
-</div>
-
-
-<!-- ======================================================
-     FOOTER
-====================================================== -->
-
 <footer>
 
     <p>
         © 2026 Ekiti State Women of Influence - Ado LG
-    </p>
-
-    <p class="small">
-        Women Registration • Ward Information • EXCO
     </p>
 
 </footer>
@@ -275,3 +91,4 @@
 
 </body>
 </html>
+```
