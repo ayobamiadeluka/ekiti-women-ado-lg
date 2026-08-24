@@ -1,1 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <title>Ekiti State Women of Influence | Ado LG</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header>
+    <div class="brand">
+
+        <img
+            src="static/logo.jpeg"
+            alt="Logo"
+            class="logo"
+        >
+
+        <div>
+            <h1>EKITI STATE WOMEN OF INFLUENCE</h1>
+            <p>ADO LG</p>
+        </div>
+
+    </div>
+
+    <nav>
+        <a href="#home">Home</a>
+        <a href="#wards">Wards</a>
+        <a href="#search">Search</a>
+        <a href="#exco">EXCO</a>
+    </nav>
+</header>
+
+
+<main>
+
+<section id="home" class="hero">
+
+    <span class="badge">
+        ADO LOCAL GOVERNMENT
+    </span>
+
+    <h2>Women of Influence</h2>
+
+    <p>
+        Ward directory and structured ward
+        executive information for Ado LG.
+    </p>
+
+    <div class="buttons">
+
+        <a href="#wards" class="button">
+            View 13 Wards
+        </a>
+
+        <a href="#search" class="button outline">
+            Search Directory
+        </a>
+
+    </div>
+
+</section>
+
+
+<section class="stats">
+
+    <div class="stat">
+        <strong>13</strong>
+        <span>Wards</span>
+    </div>
+
+    <div class="stat">
+        <strong>8</strong>
+        <span>EXCO Offices / Ward</span>
+    </div>
+
+    <div class="stat">
+        <strong>104</strong>
+        <span>Total Ward Offices</span>
+    </div>
+
+</section>
+
+
+<section id="wards" class="section">
+
+    <div class="heading">
+
+        <div>
+            <small>WARD DIRECTORY</small>
+
+            <h2>All Ado LG Wards</h2>
+        </div>
+
+        <input
+            id="wardSearch"
+            type="search"
+            placeholder="Search wards..."
+        >
+
+    </div>
+
+    <div id="wardGrid" class="ward-grid"></div>
+
+</section>
+
+
+<section id="search" class="section light">
+
+    <small>DIRECTORY SEARCH</small>
+
+    <h2>Search Women</h2>
+
+    <div class="search-box">
+
+        <input
+            id="womanSearch"
+            type="search"
+            placeholder="Search by woman's name..."
+        >
+
+        <select id="wardSelect">
+            <option value="">All Wards</option>
+        </select>
+
+    </div>
+
+    <p class="privacy">
+        Public results contain names only.
+        Phone numbers, bank names and account
+        numbers are not displayed.
+    </p>
+
+    <div id="results"></div>
+
+</section>
+
+
+<section id="exco" class="section">
+
+    <small>WARD LEADERSHIP</small>
+
+    <h2>Structured Ward Offices</h2>
+
+    <div id="excoGrid" class="exco-grid"></div>
+
+</section>
+
+</main>
+
+
+<div id="modal" class="modal">
+
+    <div class="modal-content">
+
+        <button id="closeModal" class="close">
+            ×
+        </button>
+
+        <div id="modalBody"></div>
+
+    </div>
+
+</div>
+
+
+<footer>
+
+    <strong>
+        EKITI STATE WOMEN OF INFLUENCE, ADO LG
+    </strong>
+
+    <span>© 2026</span>
+
+</footer>
+
+
+<script src="script.js"></script>
+
+</body>
+</html>
