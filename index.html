@@ -1,168 +1,147 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Ekiti State Women of Influence | Ado LG</title>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    <link rel="stylesheet" href="style.css">
+    <meta
+        name="description"
+        content="Ekiti State Women of Influence - Ado LG"
+    >
+
+    <title>
+        Ekiti State Women of Influence | Ado LG
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
 </head>
 
 <body>
 
-<header>
+<!-- ======================================================
+     HEADER
+====================================================== -->
+
+<header class="header">
+
     <div class="brand">
 
         <img
-           <img
-    src="logo.jpeg"
-    alt="Logo"
-    class="logo"
->
-            
+            src="static/logo.jpeg"
+            alt="Ekiti State Women of Influence Logo"
         >
 
-        <div>
-            <h1>EKITI STATE WOMEN OF INFLUENCE</h1>
-            <p>ADO LG</p>
+        <div class="brand-text">
+
+            <h1>
+                EKITI STATE WOMEN OF INFLUENCE
+            </h1>
+
+            <span>
+                ADO LG
+            </span>
+
         </div>
 
     </div>
 
-    <nav>
-        <a href="#home">Home</a>
-        <a href="#wards">Wards</a>
-        <a href="#search">Search</a>
-        <a href="#exco">EXCO</a>
+
+    <button
+        id="menuBtn"
+        class="menu-btn"
+        type="button"
+        aria-label="Open menu"
+    >
+        ☰
+    </button>
+
+
+    <nav id="navigation">
+
+        <a href="#home">
+            🏠 Home
+        </a>
+
+        <a href="#register">
+            📝 Register
+        </a>
+
+        <a href="#search">
+            🔎 Search
+        </a>
+
+        <a href="#exco">
+            👥 EXCO
+        </a>
+
+        <a href="#settings">
+            ⚙️ Settings
+        </a>
+
+        <a
+            href="#login"
+            id="adminNav"
+        >
+            🔐 Admin
+        </a>
+
     </nav>
+
 </header>
 
 
-<main>
+<!-- ======================================================
+     MAIN APP
+====================================================== -->
 
-<section id="home" class="hero">
-
-    <span class="badge">
-        ADO LOCAL GOVERNMENT
-    </span>
-
-    <h2>Women of Influence</h2>
-
-    <p>
-        Ward directory and structured ward
-        executive information for Ado LG.
-    </p>
-
-    <div class="buttons">
-
-        <a href="#wards" class="button">
-            View 13 Wards
-        </a>
-
-        <a href="#search" class="button outline">
-            Search Directory
-        </a>
-
-    </div>
-
-</section>
+<main id="app"></main>
 
 
-<section class="stats">
+<!-- ======================================================
+     TOAST
+====================================================== -->
 
-    <div class="stat">
-        <strong>13</strong>
-        <span>Wards</span>
-    </div>
-
-    <div class="stat">
-        <strong>8</strong>
-        <span>EXCO Offices / Ward</span>
-    </div>
-
-    <div class="stat">
-        <strong>104</strong>
-        <span>Total Ward Offices</span>
-    </div>
-
-</section>
+<div
+    id="toast"
+    class="toast"
+></div>
 
 
-<section id="wards" class="section">
+<!-- ======================================================
+     MODAL
+====================================================== -->
 
-    <div class="heading">
-
-        <div>
-            <small>WARD DIRECTORY</small>
-
-            <h2>All Ado LG Wards</h2>
-        </div>
-
-        <input
-            id="wardSearch"
-            type="search"
-            placeholder="Search wards..."
-        >
-
-    </div>
-
-    <div id="wardGrid" class="ward-grid"></div>
-
-</section>
-
-
-<section id="search" class="section light">
-
-    <small>DIRECTORY SEARCH</small>
-
-    <h2>Search Women</h2>
-
-    <div class="search-box">
-
-        <input
-            id="womanSearch"
-            type="search"
-            placeholder="Search by woman's name..."
-        >
-
-        <select id="wardSelect">
-            <option value="">All Wards</option>
-        </select>
-
-    </div>
-
-    <p class="privacy">
-        Public results contain names only.
-        Phone numbers, bank names and account
-        numbers are not displayed.
-    </p>
-
-    <div id="results"></div>
-
-</section>
-
-
-<section id="exco" class="section">
-
-    <small>WARD LEADERSHIP</small>
-
-    <h2>Structured Ward Offices</h2>
-
-    <div id="excoGrid" class="exco-grid"></div>
-
-</section>
-
-</main>
-
-
-<div id="modal" class="modal">
+<div
+    id="modal"
+    class="modal hidden"
+>
 
     <div class="modal-content">
 
-        <button id="closeModal" class="close">
-            ×
-        </button>
+        <div class="modal-header">
+
+            <h2 id="modalTitle">
+                Ward
+            </h2>
+
+            <button
+                id="closeModal"
+                class="close-btn"
+                type="button"
+            >
+                ✕
+            </button>
+
+        </div>
 
         <div id="modalBody"></div>
 
@@ -171,13 +150,123 @@
 </div>
 
 
+<!-- ======================================================
+     AI MODAL
+====================================================== -->
+
+<div
+    id="aiModal"
+    class="modal hidden"
+>
+
+    <div class="modal-content ai-modal">
+
+        <div class="modal-header">
+
+            <h2>
+                🤖 AI Assistant
+            </h2>
+
+            <button
+                id="closeAI"
+                class="close-btn"
+                type="button"
+            >
+                ✕
+            </button>
+
+        </div>
+
+
+        <div class="ai-toolbar">
+
+            <span id="aiStatus">
+                🟡 Not connected
+            </span>
+
+            <button
+                id="testAI"
+                type="button"
+            >
+                🔌 Test Connection
+            </button>
+
+            <button
+                id="clearAI"
+                type="button"
+            >
+                🧹 Clear
+            </button>
+
+            <button
+                id="stopAI"
+                type="button"
+                class="danger"
+            >
+                ⛔ Stop
+            </button>
+
+        </div>
+
+
+        <div
+            id="aiMessages"
+            class="ai-messages"
+        >
+
+            <div class="ai-message assistant">
+
+                <strong>
+                    🤖 AI
+                </strong>
+
+                <p>
+                    Hello! I'm your AI assistant.
+                    Ask me something about the website,
+                    coding, or anything else.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="ai-input-area">
+
+            <textarea
+                id="aiInput"
+                rows="3"
+                placeholder="Ask the AI..."
+            ></textarea>
+
+            <button
+                id="sendAI"
+                class="primary"
+                type="button"
+            >
+                Send ➤
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ======================================================
+     FOOTER
+====================================================== -->
+
 <footer>
 
-    <strong>
-        EKITI STATE WOMEN OF INFLUENCE, ADO LG
-    </strong>
+    <p>
+        © 2026 Ekiti State Women of Influence - Ado LG
+    </p>
 
-    <span>© 2026</span>
+    <p class="small">
+        Women Registration • Ward Information • EXCO
+    </p>
 
 </footer>
 
