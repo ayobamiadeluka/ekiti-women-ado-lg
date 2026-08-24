@@ -1,11 +1,12 @@
+```javascript
 // ============================================================
 // EKITI STATE WOMEN OF INFLUENCE - ADO LG
-// FINAL STATIC VERSION
+// STATIC WEBSITE
 // ============================================================
 
 
 // ============================================================
-// SITE CONFIGURATION
+// SITE INFORMATION
 // ============================================================
 
 const SITE_NAME =
@@ -14,48 +15,12 @@ const SITE_NAME =
 const SITE_LOCATION =
     "ADO LG";
 
-const LOGO =
-    "static/logo.jpeg";
-
-
-// ============================================================
-// ADMIN
-// ============================================================
-//
-// IMPORTANT:
-// This is a STATIC GitHub Pages application.
-//
-// Anything stored in JavaScript can be inspected
-// by someone who knows how to use browser developer tools.
-//
-// Therefore this is suitable for a prototype/demo,
-// NOT for protecting real sensitive financial information.
-//
-// ============================================================
-
-const ADMIN_USERNAME =
-    "admin";
-
-const ADMIN_PASSWORD =
-    "admin123";
-
-
-// ============================================================
-// OLLAMA
-// ============================================================
-
-const DEFAULT_OLLAMA_URL =
-    "http://localhost:11434";
-
-const DEFAULT_OLLAMA_MODEL =
-    "qwen2.5-coder:7b";
-
 
 // ============================================================
 // 13 WARDS
 // ============================================================
 
-const WARDS = [
+const wards = [
 
     ["Ado 'A'", "Idofin"],
 
@@ -90,7 +55,7 @@ const WARDS = [
 // STRUCTURED WARD OFFICES
 // ============================================================
 
-const OFFICES = [
+const offices = [
 
     "Ward Coordinator",
 
@@ -112,7 +77,63 @@ const OFFICES = [
 
 
 // ============================================================
-// DOM HELPERS
+// PUBLIC WOMEN DIRECTORY
+//
+// ONLY PUBLIC NAMES SHOULD BE STORED HERE.
+//
+// DO NOT PUT:
+// - Phone numbers
+// - Bank names
+// - Account numbers
+//
+// Example:
+//
+// const publicWomen = [
+//     {
+//         name: "Example Name",
+//         ward: 0
+//     }
+// ];
+// ============================================================
+
+const publicWomen = [];
+
+
+// ============================================================
+// LOCAL STORAGE
+// ============================================================
+
+function getRegistrations() {
+
+    try {
+
+        return JSON.parse(
+            localStorage.getItem(
+                "ekiti_women_registrations"
+            ) || "[]"
+        );
+
+    } catch (error) {
+
+        return [];
+
+    }
+
+}
+
+
+function saveRegistrations(data) {
+
+    localStorage.setItem(
+        "ekiti_women_registrations",
+        JSON.stringify(data)
+    );
+
+}
+
+
+// ============================================================
+// ELEMENTS
 // ============================================================
 
 const app =
@@ -130,316 +151,104 @@ const modal =
 const modalBody =
     document.getElementById("modalBody");
 
-const modalTitle =
-    document.getElementById("modalTitle");
-
 const closeModal =
     document.getElementById("closeModal");
 
-const toast =
-    document.getElementById("toast");
-
-const aiModal =
-    document.getElementById("aiModal");
-
-const closeAIButton =
-    document.getElementById("closeAI");
-
 
 // ============================================================
-// STORAGE
-// ============================================================
-
-function getWomen() {
-
-    try {
-
-        return JSON.parse(
-            localStorage.getItem(
-                "ekiti_women"
-            ) || "[]"
-        );
-
-    } catch {
-
-        return [];
-
-    }
-
-}
-
-
-function saveWomen(women) {
-
-    localStorage.setItem(
-        "ekiti_women",
-        JSON.stringify(women)
-    );
-
-}
-
-
-function getExcos() {
-
-    try {
-
-        return JSON.parse(
-            localStorage.getItem(
-                "ekiti_excos"
-            ) || "[]"
-        );
-
-    } catch {
-
-        return [];
-
-    }
-
-}
-
-
-function saveExcos(excos) {
-
-    localStorage.setItem(
-        "ekiti_excos",
-        JSON.stringify(excos)
-    );
-
-}
-
-
-// ============================================================
-// SETTINGS STORAGE
-// ============================================================
-
-function getSettings() {
-
-    try {
-
-        return JSON.parse(
-            localStorage.getItem(
-                "ekiti_settings"
-            ) || "{}"
-        );
-
-    } catch {
-
-        return {};
-
-    }
-
-}
-
-
-function saveSettings(settings) {
-
-    localStorage.setItem(
-        "ekiti_settings",
-        JSON.stringify(settings)
-    );
-
-}
-
-
-// ============================================================
-// INITIALIZE SETTINGS
-// ============================================================
-
-function initializeSettings() {
-
-    const settings =
-        getSettings();
-
-    if (!settings.ollamaURL) {
-
-        settings.ollamaURL =
-            DEFAULT_OLLAMA_URL;
-
-    }
-
-    if (!settings.ollamaModel) {
-
-        settings.ollamaModel =
-            DEFAULT_OLLAMA_MODEL;
-
-    }
-
-    if (!settings.theme) {
-
-        settings.theme =
-            "system";
-
-    }
-
-    saveSettings(settings);
-
-    applyTheme(settings.theme);
-
-}
-
-
-// ============================================================
-// INITIALIZE EXCO DATA
-// ============================================================
-
-function initializeExcos() {
-
-    let excos =
-        getExcos();
-
-    let changed =
-        false;
-
-
-    WARDS.forEach(
-        (ward, wardId) => {
-
-            OFFICES.forEach(
-                position => {
-
-                    const exists =
-                        excos.some(
-                            exco =>
-                                Number(
-                                    exco.wardId
-                                ) === wardId &&
-                                exco.position ===
-                                    position
-                        );
-
-
-                    if (!exists) {
-
-                        excos.push({
-
-                            id:
-                                Date.now() +
-                                Math.random(),
-
-                            wardId:
-
-                                wardId,
-
-                            position:
-
-                                position,
-
-                            name:
-
-                                "Not Assigned"
-
-                        });
-
-                        changed =
-                            true;
-
-                    }
-
-                }
-            );
-
-        }
-    );
-
-
-    if (changed) {
-
-        saveExcos(excos);
-
-    }
-
-}
-
-
-// ============================================================
-// ESCAPE HTML
+// SECURITY HELPER
 // ============================================================
 
 function escapeHTML(value) {
 
-    return String(
-        value ?? ""
-    ).replace(
-        /[&<>"']/g,
-        character => {
+    return String(value ?? "")
+        .replace(
+            /[&<>"']/g,
+            function(character) {
 
-            const map = {
+                const characters = {
 
-                "&":
-                    "&amp;",
+                    "&": "&amp;",
 
-                "<":
-                    "&lt;",
+                    "<": "&lt;",
 
-                ">":
-                    "&gt;",
+                    ">": "&gt;",
 
-                '"':
-                    "&quot;",
+                    '"': "&quot;",
 
-                "'":
-                    "&#039;"
+                    "'": "&#039;"
 
-            };
+                };
 
-            return map[
-                character
-            ];
+                return characters[character];
 
-        }
-    );
-
-}
-
-
-// ============================================================
-// TOAST
-// ============================================================
-
-let toastTimer = null;
-
-
-function showToast(message) {
-
-    toast.textContent =
-        message;
-
-    toast.classList.add(
-        "show"
-    );
-
-
-    clearTimeout(
-        toastTimer
-    );
-
-
-    toastTimer =
-        setTimeout(
-            () => {
-
-                toast.classList.remove(
-                    "show"
-                );
-
-            },
-            3000
+            }
         );
 
 }
 
 
 // ============================================================
-// ADMIN CHECK
+// THEME
 // ============================================================
 
-function isAdmin() {
+function loadTheme() {
 
-    return (
-        sessionStorage.getItem(
-            "ekiti_admin"
-        ) === "true"
+    const savedTheme =
+        localStorage.getItem(
+            "ekiti_theme"
+        ) || "system";
+
+
+    applyTheme(savedTheme);
+
+}
+
+
+function applyTheme(theme) {
+
+    if (theme === "dark") {
+
+        document.body.classList.add(
+            "dark"
+        );
+
+    }
+
+    else if (theme === "light") {
+
+        document.body.classList.remove(
+            "dark"
+        );
+
+    }
+
+    else {
+
+        const dark =
+            window.matchMedia &&
+            window.matchMedia(
+                "(prefers-color-scheme: dark)"
+            ).matches;
+
+        document.body.classList.toggle(
+            "dark",
+            dark
+        );
+
+    }
+
+}
+
+
+function changeTheme(theme) {
+
+    localStorage.setItem(
+        "ekiti_theme",
+        theme
     );
+
+    applyTheme(theme);
 
 }
 
@@ -448,57 +257,45 @@ function isAdmin() {
 // NAVIGATION
 // ============================================================
 
-function renderNavigation() {
+function closeMobileMenu() {
 
-    if (!navigation) return;
-
-
-    navigation.innerHTML = `
-
-        <a href="#home">
-            🏠 Home
-        </a>
-
-        <a href="#register">
-            📝 Register
-        </a>
-
-        <a href="#search">
-            🔎 Search
-        </a>
-
-        <a href="#exco">
-            👥 EXCO
-        </a>
-
-        <a href="#settings">
-            ⚙️ Settings
-        </a>
-
-        <a href="#login">
-            🔐 Admin
-        </a>
-
-    `;
+    navigation.classList.remove(
+        "open"
+    );
 
 }
 
 
-// ============================================================
-// CLOSE MOBILE MENU
-// ============================================================
+if (menuBtn) {
 
-function closeMenu() {
+    menuBtn.addEventListener(
+        "click",
+        function() {
 
-    if (navigation) {
+            navigation.classList.toggle(
+                "open"
+            );
 
-        navigation.classList.remove(
-            "open"
-        );
+        }
+    );
+
+}
+
+
+navigation.addEventListener(
+    "click",
+    function(event) {
+
+        if (
+            event.target.tagName === "A"
+        ) {
+
+            closeMobileMenu();
+
+        }
 
     }
-
-}
+);
 
 
 // ============================================================
@@ -507,84 +304,56 @@ function closeMenu() {
 
 function renderHome() {
 
-    const women =
-        getWomen();
+    const registrations =
+        getRegistrations();
+
 
     const approved =
-        women.filter(
+        registrations.filter(
             woman =>
                 woman.approved === true
         );
 
 
-    const excos =
-        getExcos();
+    let wardCards = "";
 
 
-    const assignedExcos =
-        excos.filter(
-            exco =>
-                exco.name &&
-                exco.name !==
-                    "Not Assigned"
-        );
-
-
-    let wardCards =
-        "";
-
-
-    WARDS.forEach(
-        (ward, index) => {
+    wards.forEach(
+        function(ward, index) {
 
             const count =
-                approved.filter(
+                publicWomen.filter(
                     woman =>
-                        Number(
-                            woman.wardId
-                        ) === index
+                        Number(woman.ward) ===
+                        index
                 ).length;
 
 
             wardCards += `
 
                 <div
-                    class="ward-card"
+                    class="card ward-card"
                     onclick="openWard(${index})"
                 >
 
                     <div class="ward-number">
-
                         ${index + 1}
-
                     </div>
 
                     <h2>
-
-                        ${escapeHTML(
-                            ward[0]
-                        )}
-
+                        ${escapeHTML(ward[0])}
                     </h2>
 
                     <p>
-
-                        ${escapeHTML(
-                            ward[1]
-                        )}
-
+                        ${escapeHTML(ward[1])}
                     </p>
 
                     <strong>
-
                         ${count}
-
                     </strong>
 
                     <p class="small">
-
-                        Approved Women
-
+                        Public Names
                     </p>
 
                 </div>
@@ -600,29 +369,23 @@ function renderHome() {
         <section class="hero">
 
             <img
-                src="${LOGO}"
+                src="static/logo.jpeg"
                 class="logo"
                 alt="Logo"
             >
 
             <h2>
-
                 ${SITE_NAME}
-
             </h2>
 
             <h3>
-
                 ${SITE_LOCATION}
-
             </h3>
 
             <p>
-
                 Women Registration,
-                Ward Information &
-                Structured EXCO Management
-
+                Ward Information and
+                EXCO Directory
             </p>
 
             <br>
@@ -631,7 +394,7 @@ function renderHome() {
                 href="#register"
                 class="button"
             >
-                📝 Register a Woman
+                📝 Register
             </a>
 
             <a
@@ -644,7 +407,7 @@ function renderHome() {
         </section>
 
 
-        <section class="stats">
+        <div class="stats">
 
             <div class="stat">
 
@@ -670,28 +433,11 @@ function renderHome() {
                 </div>
 
                 <div class="stat-number">
-                    ${women.length}
-                </div>
-
-                <div class="stat-label">
-                    Registered Women
-                </div>
-
-            </div>
-
-
-            <div class="stat">
-
-                <div class="stat-icon">
-                    ✅
-                </div>
-
-                <div class="stat-number">
                     ${approved.length}
                 </div>
 
                 <div class="stat-label">
-                    Approved Women
+                    Registered
                 </div>
 
             </div>
@@ -704,57 +450,58 @@ function renderHome() {
                 </div>
 
                 <div class="stat-number">
-                    ${assignedExcos.length}
+                    8
                 </div>
 
                 <div class="stat-label">
-                    EXCO Members
+                    Ward Offices
                 </div>
 
             </div>
 
-        </section>
+
+            <div class="stat">
+
+                <div class="stat-icon">
+                    📍
+                </div>
+
+                <div class="stat-number">
+                    ADO
+                </div>
+
+                <div class="stat-label">
+                    LG
+                </div>
+
+            </div>
+
+        </div>
 
 
-        <section class="card">
+        <div class="card">
 
             <h2>
-                📝 Register
+                📝 Register as a Woman
             </h2>
 
             <p>
-
-                Register a woman under
-                her Ado LG ward.
-
+                Submit your details for registration.
             </p>
 
             <a
                 href="#register"
                 class="button"
             >
-                📝 Register Now
+                Register Now →
             </a>
 
-        </section>
+        </div>
 
 
-        <section class="card">
-
-            <h2>
-                🏘️ Ado LG Wards
-            </h2>
-
-            <p class="small">
-
-                Select a ward to view
-                its structured offices
-                and approved public names.
-
-            </p>
-
-        </section>
-
+        <h2>
+            🏘️ Ado LG Wards
+        </h2>
 
         <div class="grid">
 
@@ -774,25 +521,25 @@ function renderHome() {
 function renderRegister() {
 
     const wardOptions =
-        WARDS.map(
-            (ward, index) => `
+        wards.map(
+            function(ward, index) {
 
-                <option value="${index}">
+                return `
 
-                    ${escapeHTML(
-                        ward[0]
-                    )}
+                    <option value="${index}">
 
-                    –
+                        Ward ${index + 1} —
+                        ${escapeHTML(ward[0])}
+                        —
+                        ${escapeHTML(ward[1])}
 
-                    ${escapeHTML(
-                        ward[1]
-                    )}
+                    </option>
 
-                </option>
+                `;
 
-            `
-        ).join("");
+            }
+        )
+        .join("");
 
 
     app.innerHTML = `
@@ -800,33 +547,24 @@ function renderRegister() {
         <div class="card form-card">
 
             <img
-                src="${LOGO}"
+                src="static/logo.jpeg"
                 class="logo"
                 alt="Logo"
             >
 
             <h2>
-                📝 Woman Registration
+                EKITI STATE WOMEN OF INFLUENCE
             </h2>
 
-            <p class="small">
+            <h3>
+                ADO LG
+            </h3>
 
-                EKITI STATE WOMEN OF
-                INFLUENCE, ADO LG
+            <div id="registerMessage"></div>
 
-            </p>
+            <form id="registerForm">
 
-
-            <div
-                id="registerMessage"
-            ></div>
-
-
-            <form
-                id="registerForm"
-            >
-
-                <label>
+                <label for="registerWard">
                     Ward
                 </label>
 
@@ -844,19 +582,20 @@ function renderRegister() {
                 </select>
 
 
-                <label>
+                <label for="registerName">
                     Name
                 </label>
 
                 <input
                     id="registerName"
+                    type="text"
                     placeholder="Full name"
                     autocomplete="name"
                     required
                 >
 
 
-                <label>
+                <label for="registerPhone">
                     Phone No
                 </label>
 
@@ -869,34 +608,33 @@ function renderRegister() {
                 >
 
 
-                <label>
+                <label for="registerBank">
                     Bank Name
                 </label>
 
                 <input
                     id="registerBank"
+                    type="text"
                     placeholder="Bank name"
                     required
                 >
 
 
-                <label>
+                <label for="registerAccount">
                     Account No
                 </label>
 
                 <input
                     id="registerAccount"
+                    type="text"
                     inputmode="numeric"
                     placeholder="Account number"
                     required
                 >
 
 
-                <br><br>
-
                 <button
                     type="submit"
-                    class="primary"
                 >
                     📝 Submit Registration
                 </button>
@@ -909,9 +647,7 @@ function renderRegister() {
 
 
     document
-        .getElementById(
-            "registerForm"
-        )
+        .getElementById("registerForm")
         .addEventListener(
             "submit",
             submitRegistration
@@ -929,14 +665,12 @@ function submitRegistration(event) {
     event.preventDefault();
 
 
-    const wardId =
-        Number(
-            document
-                .getElementById(
-                    "registerWard"
-                )
-                .value
-        );
+    const ward =
+        document
+            .getElementById(
+                "registerWard"
+            )
+            .value;
 
 
     const name =
@@ -957,7 +691,7 @@ function submitRegistration(event) {
             .trim();
 
 
-    const bankName =
+    const bank =
         document
             .getElementById(
                 "registerBank"
@@ -966,7 +700,7 @@ function submitRegistration(event) {
             .trim();
 
 
-    const accountNo =
+    const account =
         document
             .getElementById(
                 "registerAccount"
@@ -976,66 +710,63 @@ function submitRegistration(event) {
 
 
     if (
-        Number.isNaN(wardId) ||
+        ward === "" ||
         !name ||
         !phone ||
-        !bankName ||
-        !accountNo
+        !bank ||
+        !account
     ) {
 
-        showToast(
-            "Please complete all fields."
-        );
+        document.getElementById(
+            "registerMessage"
+        ).innerHTML = `
+
+            <div class="error">
+
+                Please complete all fields.
+
+            </div>
+
+        `;
 
         return;
 
     }
 
 
-    const women =
-        getWomen();
+    const registrations =
+        getRegistrations();
 
 
-    women.push({
+    registrations.push({
 
         id:
-            Date.now() +
-            Math.random(),
+            Date.now(),
 
-        wardId:
+        ward:
+            Number(ward),
 
-            wardId,
+        name,
 
-        name:
-
-            name,
-
-        phone:
-
-            phone,
+        phone,
 
         bankName:
-
-            bankName,
+            bank,
 
         accountNo:
-
-            accountNo,
+            account,
 
         approved:
-
             false,
 
         createdAt:
-
-            new Date()
-                .toISOString()
+            new Date().toISOString()
 
     });
 
 
-    saveWomen(
-        women
+    saveRegistrations(
+        registrations
     );
 
 
@@ -1045,12 +776,14 @@ function submitRegistration(event) {
 
         <div class="success-box">
 
-            ✅ Registration submitted successfully.
+            <strong>
+                Registration submitted successfully! ✅
+            </strong>
 
             <br><br>
 
-            Your registration is waiting
-            for administrator approval.
+            Your registration has been received
+            and is awaiting approval.
 
         </div>
 
@@ -1063,11 +796,6 @@ function submitRegistration(event) {
         )
         .reset();
 
-
-    showToast(
-        "Registration submitted."
-    );
-
 }
 
 
@@ -1078,25 +806,24 @@ function submitRegistration(event) {
 function renderSearch() {
 
     const wardOptions =
-        WARDS.map(
-            (ward, index) => `
+        wards.map(
+            function(ward, index) {
 
-                <option value="${index}">
+                return `
 
-                    ${escapeHTML(
-                        ward[0]
-                    )}
+                    <option value="${index}">
 
-                    –
+                        ${escapeHTML(ward[0])}
+                        —
+                        ${escapeHTML(ward[1])}
 
-                    ${escapeHTML(
-                        ward[1]
-                    )}
+                    </option>
 
-                </option>
+                `;
 
-            `
-        ).join("");
+            }
+        )
+        .join("");
 
 
     app.innerHTML = `
@@ -1104,75 +831,54 @@ function renderSearch() {
         <div class="card">
 
             <h2>
-                🔎 Search Women
+                🔎 Search Registered Women
             </h2>
 
-            <p class="small">
+            <p class="privacy">
 
-                Only approved public names
-                are displayed.
+                Only publicly approved names are
+                displayed here.
 
             </p>
 
+            <label>
+                Woman's Name
+            </label>
 
-            <form
-                id="searchForm"
+            <input
+                id="womanSearch"
+                placeholder="Enter name..."
             >
 
-                <label>
-                    Woman's Name
-                </label>
 
-                <input
-                    id="searchName"
-                    placeholder="Enter name"
-                >
+            <label>
+                Ward
+            </label>
 
+            <select id="wardSelect">
 
-                <label>
-                    Ward
-                </label>
+                <option value="">
+                    All Wards
+                </option>
 
-                <select
-                    id="searchWard"
-                >
+                ${wardOptions}
 
-                    <option value="all">
-                        All Wards
-                    </option>
-
-                    ${wardOptions}
-
-                </select>
-
-
-                <br><br>
-
-                <button
-                    type="submit"
-                    class="primary"
-                >
-                    🔎 Search
-                </button>
-
-            </form>
+            </select>
 
         </div>
 
 
         <div
             class="card"
-            id="searchResults"
+            id="results"
         >
 
             <h2>
                 Search Results
             </h2>
 
-            <p class="small">
-
+            <p class="privacy">
                 Enter a name or select a ward.
-
             </p>
 
         </div>
@@ -1180,58 +886,79 @@ function renderSearch() {
     `;
 
 
-    document
-        .getElementById(
-            "searchForm"
-        )
-        .addEventListener(
-            "submit",
-            event => {
-
-                event.preventDefault();
-
-                showSearchResults();
-
-            }
+    const searchInput =
+        document.getElementById(
+            "womanSearch"
         );
+
+    const select =
+        document.getElementById(
+            "wardSelect"
+        );
+
+
+    searchInput.addEventListener(
+        "input",
+        searchWomen
+    );
+
+    select.addEventListener(
+        "change",
+        searchWomen
+    );
+
+
+    searchWomen();
 
 }
 
 
 // ============================================================
-// SHOW SEARCH RESULTS
+// SEARCH WOMEN
 // ============================================================
 
-function showSearchResults() {
+function searchWomen() {
 
-    const women =
-        getWomen().filter(
-            woman =>
-                woman.approved === true
+    const searchInput =
+        document.getElementById(
+            "womanSearch"
+        );
+
+    const wardSelect =
+        document.getElementById(
+            "wardSelect"
+        );
+
+    const results =
+        document.getElementById(
+            "results"
         );
 
 
+    if (
+        !searchInput ||
+        !wardSelect ||
+        !results
+    ) {
+
+        return;
+
+    }
+
+
     const query =
-        document
-            .getElementById(
-                "searchName"
-            )
-            .value
+        searchInput.value
             .trim()
             .toLowerCase();
 
 
-    const ward =
-        document
-            .getElementById(
-                "searchWard"
-            )
-            .value;
+    const selectedWard =
+        wardSelect.value;
 
 
-    const results =
-        women.filter(
-            woman => {
+    const matches =
+        publicWomen.filter(
+            function(woman) {
 
                 const name =
                     String(
@@ -1239,52 +966,45 @@ function showSearchResults() {
                     ).toLowerCase();
 
 
-                const nameMatch =
+                const nameMatches =
                     !query ||
-                    name.includes(
-                        query
-                    );
+                    name.includes(query);
 
 
-                const wardMatch =
-                    ward === "all" ||
-                    Number(
-                        woman.wardId
+                const wardMatches =
+                    selectedWard === "" ||
+                    String(
+                        woman.ward
                     ) ===
-                    Number(
-                        ward
-                    );
+                    selectedWard;
 
 
                 return (
-                    nameMatch &&
-                    wardMatch
+                    nameMatches &&
+                    wardMatches
                 );
 
             }
         );
 
 
-    const box =
-        document.getElementById(
-            "searchResults"
-        );
+    if (
+        matches.length === 0
+    ) {
 
-
-    if (!results.length) {
-
-        box.innerHTML = `
+        results.innerHTML = `
 
             <h2>
                 Search Results
             </h2>
 
-            <div class="notice">
+            <p class="privacy">
 
-                No approved woman matched
-                your search.
+                No public names have been
+                added or no matching name
+                was found.
 
-            </div>
+            </p>
 
         `;
 
@@ -1293,65 +1013,60 @@ function showSearchResults() {
     }
 
 
-    let html = `
+    results.innerHTML = `
 
         <h2>
             Search Results
         </h2>
 
+        ${matches
+            .map(
+                function(woman, index) {
+
+                    const ward =
+                        wards[
+                            Number(
+                                woman.ward
+                            )
+                        ];
+
+
+                    return `
+
+                        <div class="result">
+
+                            <div class="result-name">
+
+                                ${index + 1}.
+                                ${escapeHTML(
+                                    woman.name
+                                )}
+
+                            </div>
+
+                            <div>
+
+                                🏘️
+                                ${escapeHTML(
+                                    ward[0]
+                                )}
+
+                                —
+                                ${escapeHTML(
+                                    ward[1]
+                                )}
+
+                            </div>
+
+                        </div>
+
+                    `;
+
+                }
+            )
+            .join("")}
+
     `;
-
-
-    results.forEach(
-        (woman, index) => {
-
-            const wardData =
-                WARDS[
-                    Number(
-                        woman.wardId
-                    )
-                ];
-
-
-            html += `
-
-                <div class="result">
-
-                    <div class="result-name">
-
-                        ${index + 1}.
-                        ${escapeHTML(
-                            woman.name
-                        )}
-
-                    </div>
-
-                    <div>
-
-                        🏘️
-
-                        ${escapeHTML(
-                            wardData[0]
-                        )}
-
-                        –
-
-                        ${escapeHTML(
-                            wardData[1]
-                        )}
-
-                    </div>
-
-                </div>
-
-            `;
-
-        }
-    );
-
-
-    box.innerHTML =
-        html;
 
 }
 
@@ -1362,17 +1077,16 @@ function showSearchResults() {
 
 function renderExco() {
 
-    let cards =
-        "";
+    let cards = "";
 
 
-    WARDS.forEach(
-        (ward, index) => {
+    wards.forEach(
+        function(ward, index) {
 
             cards += `
 
                 <div
-                    class="ward-card"
+                    class="exco-card"
                     onclick="openWard(${index})"
                 >
 
@@ -1414,48 +1128,42 @@ function renderExco() {
 
     app.innerHTML = `
 
-        <div class="card">
+        <div class="hero">
+
+            <img
+                src="static/logo.jpeg"
+                class="logo"
+                alt="Logo"
+            >
 
             <h2>
                 👥 Ward EXCO
             </h2>
 
             <p>
-
-                Each ward has the following
-                structured offices:
-
+                Structured offices for
+                all Ado LG wards
             </p>
-
-
-            <div class="grid">
-
-                ${OFFICES.map(
-                    office => `
-
-                        <div class="card">
-
-                            <strong>
-
-                                ${escapeHTML(
-                                    office
-                                )}
-
-                            </strong>
-
-                        </div>
-
-                    `
-                ).join("")}
-
-            </div>
 
         </div>
 
 
-        <h2>
-            🏘️ Select a Ward
-        </h2>
+        <div class="card">
+
+            <h2>
+                Structured Ward Offices
+            </h2>
+
+            <p class="privacy">
+
+                Each ward has eight structured offices.
+
+                Click a ward to view them.
+
+            </p>
+
+        </div>
+
 
         <div class="grid">
 
@@ -1469,106 +1177,53 @@ function renderExco() {
 
 
 // ============================================================
-// OPEN WARD
+// WARD DETAILS
 // ============================================================
 
-function openWard(wardId) {
+function openWard(index) {
 
     const ward =
-        WARDS[
-            Number(
-                wardId
-            )
-        ];
-
-
-    if (!ward) return;
-
-
-    location.hash =
-        `ward-${wardId}`;
-
-}
-
-
-// ============================================================
-// RENDER WARD DETAILS
-// ============================================================
-
-function renderWard(wardId) {
-
-    const ward =
-        WARDS[
-            Number(
-                wardId
-            )
-        ];
+        wards[index];
 
 
     if (!ward) {
-
-        renderHome();
 
         return;
 
     }
 
 
-    const excos =
-        getExcos();
-
-
-    const women =
-        getWomen().filter(
-            woman =>
-                woman.approved === true &&
-                Number(
-                    woman.wardId
-                ) ===
-                Number(
-                    wardId
-                )
-        );
-
-
-    modalTitle.textContent =
-        `WARD ${Number(wardId) + 1} — ${ward[0]}`;
-
-
     let html = `
 
-        <p class="privacy">
+        <small>
+            WARD ${index + 1}
+        </small>
+
+        <h2>
+
+            ${escapeHTML(
+                ward[0]
+            )}
+
+            —
 
             ${escapeHTML(
                 ward[1]
             )}
 
+        </h2>
+
+        <p class="privacy">
+
+            Structured ward offices
+
         </p>
-
-
-        <h3>
-            👥 Structured Ward Offices
-        </h3>
 
     `;
 
 
-    OFFICES.forEach(
-        office => {
-
-            const exco =
-                excos.find(
-                    item =>
-                        Number(
-                            item.wardId
-                        ) ===
-                        Number(
-                            wardId
-                        ) &&
-                        item.position ===
-                            office
-                );
-
+    offices.forEach(
+        function(office) {
 
             html += `
 
@@ -1583,12 +1238,7 @@ function renderWard(wardId) {
                     </strong>
 
                     <span>
-
-                        ${escapeHTML(
-                            exco?.name ||
-                            "Not Assigned"
-                        )}
-
+                        Not Assigned
                     </span>
 
                 </div>
@@ -1597,65 +1247,6 @@ function renderWard(wardId) {
 
         }
     );
-
-
-    html += `
-
-        <hr>
-
-        <h3>
-            👩 Approved Women
-        </h3>
-
-        <p class="small">
-
-            Only approved public names
-            are shown.
-
-        </p>
-
-    `;
-
-
-    if (!women.length) {
-
-        html += `
-
-            <div class="notice">
-
-                No approved women have been
-                added to this ward yet.
-
-            </div>
-
-        `;
-
-    } else {
-
-        women.forEach(
-            (woman, index) => {
-
-                html += `
-
-                    <div class="exco">
-
-                        <strong>
-
-                            ${index + 1}.
-                            ${escapeHTML(
-                                woman.name
-                            )}
-
-                        </strong>
-
-                    </div>
-
-                `;
-
-            }
-        );
-
-    }
 
 
     modalBody.innerHTML =
@@ -1670,1113 +1261,66 @@ function renderWard(wardId) {
 
 
 // ============================================================
-// LOGIN
+// CLOSE MODAL
 // ============================================================
 
-function renderLogin() {
+function closeWardModal() {
 
-    app.innerHTML = `
-
-        <div class="card form-card">
-
-            <img
-                src="${LOGO}"
-                class="logo"
-                alt="Logo"
-            >
-
-            <h2>
-                🔐 Administrator Login
-            </h2>
-
-            <p class="small">
-
-                Administrator access only.
-
-            </p>
-
-
-            <div
-                id="loginMessage"
-            ></div>
-
-
-            <form
-                id="loginForm"
-            >
-
-                <label>
-                    Username
-                </label>
-
-                <input
-                    id="adminUsername"
-                    autocomplete="username"
-                    required
-                >
-
-
-                <label>
-                    Password
-                </label>
-
-                <input
-                    id="adminPassword"
-                    type="password"
-                    autocomplete="current-password"
-                    required
-                >
-
-
-                <br><br>
-
-                <button
-                    class="primary"
-                    type="submit"
-                >
-                    🔐 Login
-                </button>
-
-            </form>
-
-        </div>
-
-    `;
-
-
-    document
-        .getElementById(
-            "loginForm"
-        )
-        .addEventListener(
-            "submit",
-            adminLogin
-        );
+    modal.classList.add(
+        "hidden"
+    );
 
 }
 
 
-// ============================================================
-// ADMIN LOGIN
-// ============================================================
+closeModal.addEventListener(
+    "click",
+    closeWardModal
+);
 
-function adminLogin(event) {
 
-    event.preventDefault();
+modal.addEventListener(
+    "click",
+    function(event) {
 
+        if (
+            event.target === modal
+        ) {
 
-    const username =
-        document
-            .getElementById(
-                "adminUsername"
-            )
-            .value
-            .trim();
-
-
-    const password =
-        document
-            .getElementById(
-                "adminPassword"
-            )
-            .value;
-
-
-    if (
-        username ===
-            ADMIN_USERNAME &&
-        password ===
-            ADMIN_PASSWORD
-    ) {
-
-        sessionStorage.setItem(
-            "ekiti_admin",
-            "true"
-        );
-
-
-        showToast(
-            "Administrator login successful."
-        );
-
-
-        location.hash =
-            "admin";
-
-
-        return;
-
-    }
-
-
-    document
-        .getElementById(
-            "loginMessage"
-        )
-        .innerHTML = `
-
-            <div class="error">
-
-                Incorrect username
-                or password.
-
-            </div>
-
-        `;
-
-}
-
-
-// ============================================================
-// ADMIN DASHBOARD
-// ============================================================
-
-function renderAdmin() {
-
-    if (!isAdmin()) {
-
-        location.hash =
-            "login";
-
-        return;
-
-    }
-
-
-    const women =
-        getWomen();
-
-
-    const approved =
-        women.filter(
-            woman =>
-                woman.approved
-        );
-
-
-    const pending =
-        women.filter(
-            woman =>
-                !woman.approved
-        );
-
-
-    const excos =
-        getExcos();
-
-
-    let womenRows =
-        "";
-
-
-    women.forEach(
-        woman => {
-
-            womenRows += `
-
-                <tr>
-
-                    <td>
-                        ${escapeHTML(
-                            woman.name
-                        )}
-                    </td>
-
-                    <td>
-                        ${escapeHTML(
-                            woman.phone
-                        )}
-                    </td>
-
-                    <td>
-                        ${escapeHTML(
-                            woman.bankName
-                        )}
-                    </td>
-
-                    <td>
-                        ${escapeHTML(
-                            woman.accountNo
-                        )}
-                    </td>
-
-                    <td>
-                        ${escapeHTML(
-                            WARDS[
-                                Number(
-                                    woman.wardId
-                                )
-                            ][0]
-                        )}
-                    </td>
-
-                    <td>
-
-                        ${
-                            woman.approved
-
-                                ? "✅ Approved"
-
-                                : "⏳ Pending"
-
-                        }
-
-                    </td>
-
-                    <td>
-
-                        <div class="actions">
-
-                            ${
-                                woman.approved
-
-                                    ?
-
-                                `<button
-                                    class="danger"
-                                    onclick="
-                                        rejectWoman('${woman.id}')
-                                    "
-                                >
-                                    Reject
-                                </button>`
-
-                                    :
-
-                                `<button
-                                    class="success"
-                                    onclick="
-                                        approveWoman('${woman.id}')
-                                    "
-                                >
-                                    Approve
-                                </button>`
-                            }
-
-
-                            <button
-                                onclick="
-                                    editWoman('${woman.id}')
-                                "
-                            >
-                                Edit
-                            </button>
-
-
-                            <button
-                                class="danger"
-                                onclick="
-                                    deleteWoman('${woman.id}')
-                                "
-                            >
-                                Delete
-                            </button>
-
-                        </div>
-
-                    </td>
-
-                </tr>
-
-            `;
+            closeWardModal();
 
         }
-    );
-
-
-    if (!womenRows) {
-
-        womenRows = `
-
-            <tr>
-
-                <td colspan="7">
-
-                    No registrations yet.
-
-                </td>
-
-            </tr>
-
-        `;
 
     }
+);
 
 
-    let excoRows =
-        "";
+document.addEventListener(
+    "keydown",
+    function(event) {
 
+        if (
+            event.key === "Escape"
+        ) {
 
-    excos.forEach(
-        exco => {
-
-            excoRows += `
-
-                <tr>
-
-                    <td>
-
-                        ${escapeHTML(
-                            WARDS[
-                                Number(
-                                    exco.wardId
-                                )
-                            ][0]
-                        )}
-
-                    </td>
-
-                    <td>
-
-                        ${escapeHTML(
-                            exco.position
-                        )}
-
-                    </td>
-
-                    <td>
-
-                        ${escapeHTML(
-                            exco.name
-                        )}
-
-                    </td>
-
-                    <td>
-
-                        <button
-                            onclick="
-                                editExco('${exco.id}')
-                            "
-                        >
-                            Edit
-                        </button>
-
-                    </td>
-
-                </tr>
-
-            `;
+            closeWardModal();
 
         }
-    );
-
-
-    app.innerHTML = `
-
-        <div class="hero">
-
-            <img
-                src="${LOGO}"
-                class="logo"
-                alt="Logo"
-            >
-
-            <h2>
-                🔐 ADMIN DASHBOARD
-            </h2>
-
-            <p>
-                ${SITE_NAME}
-            </p>
-
-            <button
-                class="secondary"
-                onclick="logout()"
-            >
-                Logout
-            </button>
-
-        </div>
-
-
-        <div class="stats">
-
-            <div class="stat">
-
-                <div class="stat-number">
-                    ${women.length}
-                </div>
-
-                <div class="stat-label">
-                    Total
-                </div>
-
-            </div>
-
-
-            <div class="stat">
-
-                <div class="stat-number">
-                    ${approved.length}
-                </div>
-
-                <div class="stat-label">
-                    Approved
-                </div>
-
-            </div>
-
-
-            <div class="stat">
-
-                <div class="stat-number">
-                    ${pending.length}
-                </div>
-
-                <div class="stat-label">
-                    Pending
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <div class="card">
-
-            <h2>
-                👥 Assign EXCO
-            </h2>
-
-
-            <form
-                id="excoForm"
-            >
-
-                <label>
-                    Ward
-                </label>
-
-                <select
-                    id="excoWard"
-                    required
-                >
-
-                    <option value="">
-                        Select Ward
-                    </option>
-
-                    ${WARDS.map(
-                        (ward, index) => `
-
-                            <option
-                                value="${index}"
-                            >
-
-                                ${escapeHTML(
-                                    ward[0]
-                                )}
-
-                                –
-
-                                ${escapeHTML(
-                                    ward[1]
-                                )}
-
-                            </option>
-
-                        `
-                    ).join("")}
-
-                </select>
-
-
-                <label>
-                    Office
-                </label>
-
-                <select
-                    id="excoPosition"
-                    required
-                >
-
-                    <option value="">
-                        Select Office
-                    </option>
-
-                    ${OFFICES.map(
-                        office => `
-
-                            <option
-                                value="${escapeHTML(
-                                    office
-                                )}"
-                            >
-
-                                ${escapeHTML(
-                                    office
-                                )}
-
-                            </option>
-
-                        `
-                    ).join("")}
-
-                </select>
-
-
-                <label>
-                    Name
-                </label>
-
-                <input
-                    id="excoName"
-                    placeholder="EXCO member name"
-                    required
-                >
-
-
-                <br><br>
-
-                <button
-                    class="primary"
-                    type="submit"
-                >
-                    Save EXCO
-                </button>
-
-            </form>
-
-        </div>
-
-
-        <div class="card">
-
-            <h2>
-                👥 Ward EXCO
-            </h2>
-
-            <div class="table-container">
-
-                <table>
-
-                    <thead>
-
-                        <tr>
-
-                            <th>
-                                Ward
-                            </th>
-
-                            <th>
-                                Office
-                            </th>
-
-                            <th>
-                                Name
-                            </th>
-
-                            <th>
-                                Action
-                            </th>
-
-                        </tr>
-
-                    </thead>
-
-                    <tbody>
-
-                        ${excoRows}
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-        </div>
-
-
-        <div class="card">
-
-            <h2>
-                👩 Registered Women
-            </h2>
-
-            <div class="notice">
-
-                🔐 Private registration details
-                are visible only inside this
-                administrator dashboard.
-
-            </div>
-
-            <div class="table-container">
-
-                <table>
-
-                    <thead>
-
-                        <tr>
-
-                            <th>
-                                Name
-                            </th>
-
-                            <th>
-                                Phone
-                            </th>
-
-                            <th>
-                                Bank
-                            </th>
-
-                            <th>
-                                Account
-                            </th>
-
-                            <th>
-                                Ward
-                            </th>
-
-                            <th>
-                                Status
-                            </th>
-
-                            <th>
-                                Actions
-                            </th>
-
-                        </tr>
-
-                    </thead>
-
-                    <tbody>
-
-                        ${womenRows}
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-        </div>
-
-    `;
-
-
-    document
-        .getElementById(
-            "excoForm"
-        )
-        .addEventListener(
-            "submit",
-            saveExco
-        );
-
-}
-
-
-// ============================================================
-// SAVE EXCO
-// ============================================================
-
-function saveExco(event) {
-
-    event.preventDefault();
-
-
-    const wardId =
-        Number(
-            document
-                .getElementById(
-                    "excoWard"
-                )
-                .value
-        );
-
-
-    const position =
-        document
-            .getElementById(
-                "excoPosition"
-            )
-            .value;
-
-
-    const name =
-        document
-            .getElementById(
-                "excoName"
-            )
-            .value
-            .trim();
-
-
-    if (
-        Number.isNaN(wardId) ||
-        !position ||
-        !name
-    ) {
-
-        showToast(
-            "Complete all EXCO fields."
-        );
-
-        return;
 
     }
-
-
-    const excos =
-        getExcos();
-
-
-    const existing =
-        excos.find(
-            exco =>
-                Number(
-                    exco.wardId
-                ) === wardId &&
-                exco.position ===
-                    position
-        );
-
-
-    if (existing) {
-
-        existing.name =
-            name;
-
-    } else {
-
-        excos.push({
-
-            id:
-                Date.now() +
-                Math.random(),
-
-            wardId,
-
-            position,
-
-            name
-
-        });
-
-    }
-
-
-    saveExcos(
-        excos
-    );
-
-
-    showToast(
-        "EXCO saved successfully."
-    );
-
-
-    renderAdmin();
-
-}
+);
 
 
 // ============================================================
-// APPROVE WOMAN
-// ============================================================
-
-function approveWoman(id) {
-
-    const women =
-        getWomen();
-
-
-    const woman =
-        women.find(
-            item =>
-                String(
-                    item.id
-                ) ===
-                String(
-                    id
-                )
-        );
-
-
-    if (!woman) return;
-
-
-    woman.approved =
-        true;
-
-
-    saveWomen(
-        women
-    );
-
-
-    renderAdmin();
-
-}
-
-
-// ============================================================
-// REJECT WOMAN
-// ============================================================
-
-function rejectWoman(id) {
-
-    const women =
-        getWomen();
-
-
-    const woman =
-        women.find(
-            item =>
-                String(
-                    item.id
-                ) ===
-                String(
-                    id
-                )
-        );
-
-
-    if (!woman) return;
-
-
-    woman.approved =
-        false;
-
-
-    saveWomen(
-        women
-    );
-
-
-    renderAdmin();
-
-}
-
-
-// ============================================================
-// DELETE WOMAN
-// ============================================================
-
-function deleteWoman(id) {
-
-    if (
-        !confirm(
-            "Delete this registration?"
-        )
-    ) {
-
-        return;
-
-    }
-
-
-    let women =
-        getWomen();
-
-
-    women =
-        women.filter(
-            woman =>
-                String(
-                    woman.id
-                ) !==
-                String(
-                    id
-                )
-        );
-
-
-    saveWomen(
-        women
-    );
-
-
-    showToast(
-        "Registration deleted."
-    );
-
-
-    renderAdmin();
-
-}
-
-
-// ============================================================
-// EDIT WOMAN
-// ============================================================
-
-function editWoman(id) {
-
-    const women =
-        getWomen();
-
-
-    const woman =
-        women.find(
-            item =>
-                String(
-                    item.id
-                ) ===
-                String(
-                    id
-                )
-        );
-
-
-    if (!woman) return;
-
-
-    const name =
-        prompt(
-            "Name:",
-            woman.name
-        );
-
-
-    if (name === null)
-        return;
-
-
-    const phone =
-        prompt(
-            "Phone:",
-            woman.phone
-        );
-
-
-    if (phone === null)
-        return;
-
-
-    const bank =
-        prompt(
-            "Bank name:",
-            woman.bankName
-        );
-
-
-    if (bank === null)
-        return;
-
-
-    const account =
-        prompt(
-            "Account number:",
-            woman.accountNo
-        );
-
-
-    if (account === null)
-        return;
-
-
-    woman.name =
-        name.trim();
-
-    woman.phone =
-        phone.trim();
-
-    woman.bankName =
-        bank.trim();
-
-    woman.accountNo =
-        account.trim();
-
-
-    saveWomen(
-        women
-    );
-
-
-    showToast(
-        "Registration updated."
-    );
-
-
-    renderAdmin();
-
-}
-
-
-// ============================================================
-// EDIT EXCO
-// ============================================================
-
-function editExco(id) {
-
-    const excos =
-        getExcos();
-
-
-    const exco =
-        excos.find(
-            item =>
-                String(
-                    item.id
-                ) ===
-                String(
-                    id
-                )
-        );
-
-
-    if (!exco) return;
-
-
-    const name =
-        prompt(
-            "EXCO member name:",
-            exco.name
-        );
-
-
-    if (name === null)
-        return;
-
-
-    exco.name =
-        name.trim();
-
-
-    saveExcos(
-        excos
-    );
-
-
-    renderAdmin();
-
-}
-
-
-// ============================================================
-// LOGOUT
-// ============================================================
-
-function logout() {
-
-    sessionStorage.removeItem(
-        "ekiti_admin"
-    );
-
-
-    showToast(
-        "Logged out."
-    );
-
-
-    location.hash =
-        "home";
-
-}
-
-
-// ============================================================
-// SETTINGS PAGE
+// SETTINGS
 // ============================================================
 
 function renderSettings() {
 
-    const settings =
-        getSettings();
+    const savedTheme =
+        localStorage.getItem(
+            "ekiti_theme"
+        ) || "system";
 
 
     app.innerHTML = `
@@ -2787,97 +1331,46 @@ function renderSettings() {
                 ⚙️ Settings
             </h2>
 
+            <div class="settings-row">
 
-            <label>
-                Appearance
-            </label>
+                <div>
 
-            <select
-                id="themeSelect"
-            >
+                    <strong>
+                        Appearance
+                    </strong>
 
-                <option
-                    value="system"
-                    ${
-                        settings.theme ===
-                        "system"
-                            ? "selected"
-                            : ""
-                    }
-                >
-                    System
-                </option>
+                    <p class="privacy">
+                        Choose the website theme.
+                    </p>
 
-                <option
-                    value="light"
-                    ${
-                        settings.theme ===
-                        "light"
-                            ? "selected"
-                            : ""
-                    }
-                >
-                    Light
-                </option>
+                </div>
 
-                <option
-                    value="dark"
-                    ${
-                        settings.theme ===
-                        "dark"
-                            ? "selected"
-                            : ""
-                    }
-                >
-                    Dark
-                </option>
+                <select id="themeSelect">
 
-            </select>
+                    <option
+                        value="system"
+                        ${savedTheme === "system" ? "selected" : ""}
+                    >
+                        System
+                    </option>
 
+                    <option
+                        value="light"
+                        ${savedTheme === "light" ? "selected" : ""}
+                    >
+                        Light
+                    </option>
 
-            <label>
-                Ollama URL
-            </label>
+                    <option
+                        value="dark"
+                        ${savedTheme === "dark" ? "selected" : ""}
+                    >
+                        Dark
+                    </option>
 
-            <input
-                id="ollamaURL"
-                value="${escapeHTML(
-                    settings.ollamaURL ||
-                    DEFAULT_OLLAMA_URL
-                )}"
-            >
+                </select>
 
-
-            <label>
-                Ollama Model
-            </label>
-
-            <input
-                id="ollamaModel"
-                value="${escapeHTML(
-                    settings.ollamaModel ||
-                    DEFAULT_OLLAMA_MODEL
-                )}"
-            >
-
-
-            <br><br>
-
-            <button
-                id="saveSettingsButton"
-                class="primary"
-                type="button"
-            >
-                💾 Save Settings
-            </button>
-
-
-            <button
-                id="openAIButton"
-                type="button"
-            >
-                🤖 Open AI Assistant
-            </button>
+            </div>
 
         </div>
 
@@ -2890,704 +1383,14 @@ function renderSettings() {
         )
         .addEventListener(
             "change",
-            event => {
+            function(event) {
 
-                applyTheme(
+                changeTheme(
                     event.target.value
                 );
 
             }
         );
-
-
-    document
-        .getElementById(
-            "saveSettingsButton"
-        )
-        .addEventListener(
-            "click",
-            saveSettingsFromPage
-        );
-
-
-    document
-        .getElementById(
-            "openAIButton"
-        )
-        .addEventListener(
-            "click",
-            openAI
-        );
-
-}
-
-
-// ============================================================
-// SAVE SETTINGS FROM PAGE
-// ============================================================
-
-function saveSettingsFromPage() {
-
-    const settings =
-        getSettings();
-
-
-    settings.theme =
-        document
-            .getElementById(
-                "themeSelect"
-            )
-            .value;
-
-
-    settings.ollamaURL =
-        document
-            .getElementById(
-                "ollamaURL"
-            )
-            .value
-            .trim()
-            .replace(
-                /\/+$/,
-                ""
-            );
-
-
-    settings.ollamaModel =
-        document
-            .getElementById(
-                "ollamaModel"
-            )
-            .value
-            .trim();
-
-
-    saveSettings(
-        settings
-    );
-
-
-    applyTheme(
-        settings.theme
-    );
-
-
-    showToast(
-        "Settings saved."
-    );
-
-}
-
-
-// ============================================================
-// THEME
-// ============================================================
-
-function applyTheme(theme) {
-
-    if (
-        theme ===
-        "dark"
-    ) {
-
-        document.body.classList.add(
-            "dark"
-        );
-
-        return;
-
-    }
-
-
-    if (
-        theme ===
-        "light"
-    ) {
-
-        document.body.classList.remove(
-            "dark"
-        );
-
-        return;
-
-    }
-
-
-    const dark =
-        window.matchMedia(
-            "(prefers-color-scheme: dark)"
-        ).matches;
-
-
-    document.body.classList.toggle(
-        "dark",
-        dark
-    );
-
-}
-
-
-// ============================================================
-// SYSTEM THEME CHANGES
-// ============================================================
-
-const mediaQuery =
-    window.matchMedia(
-        "(prefers-color-scheme: dark)"
-    );
-
-
-mediaQuery.addEventListener(
-    "change",
-    () => {
-
-        const settings =
-            getSettings();
-
-
-        if (
-            settings.theme ===
-            "system"
-        ) {
-
-            applyTheme(
-                "system"
-            );
-
-        }
-
-    }
-);
-
-
-// ============================================================
-// AI MODAL
-// ============================================================
-
-function openAI() {
-
-    aiModal.classList.remove(
-        "hidden"
-    );
-
-
-    updateAIStatus(
-        "🟡 Ready"
-    );
-
-}
-
-
-function closeAI() {
-
-    aiModal.classList.add(
-        "hidden"
-    );
-
-}
-
-
-// ============================================================
-// AI STATUS
-// ============================================================
-
-function updateAIStatus(
-    message
-) {
-
-    const status =
-        document.getElementById(
-            "aiStatus"
-        );
-
-
-    if (status) {
-
-        status.textContent =
-            message;
-
-    }
-
-}
-
-
-// ============================================================
-// AI MESSAGE
-// ============================================================
-
-function addAIMessage(
-    role,
-    message
-) {
-
-    const container =
-        document.getElementById(
-            "aiMessages"
-        );
-
-
-    const div =
-        document.createElement(
-            "div"
-        );
-
-
-    div.className =
-        `ai-message ${role}`;
-
-
-    const strong =
-        document.createElement(
-            "strong"
-        );
-
-
-    strong.textContent =
-        role === "user"
-            ? "👤 You"
-            : "🤖 AI";
-
-
-    const p =
-        document.createElement(
-            "p"
-        );
-
-
-    p.textContent =
-        message;
-
-
-    div.appendChild(
-        strong
-    );
-
-
-    div.appendChild(
-        p
-    );
-
-
-    container.appendChild(
-        div
-    );
-
-
-    container.scrollTop =
-        container.scrollHeight;
-
-
-    return p;
-
-}
-
-
-// ============================================================
-// AI CONNECTION
-// ============================================================
-
-async function testAIConnection() {
-
-    const settings =
-        getSettings();
-
-
-    const baseURL =
-        settings.ollamaURL ||
-        DEFAULT_OLLAMA_URL;
-
-
-    updateAIStatus(
-        "🟡 Testing..."
-    );
-
-
-    try {
-
-        const response =
-            await fetch(
-                `${baseURL}/api/tags`,
-                {
-                    method:
-                        "GET"
-                }
-            );
-
-
-        if (!response.ok) {
-
-            throw new Error(
-                `HTTP ${response.status}`
-            );
-
-        }
-
-
-        const data =
-            await response.json();
-
-
-        const models =
-            data.models ||
-            [];
-
-
-        updateAIStatus(
-            `🟢 Connected (${models.length} models)`
-        );
-
-
-        showToast(
-            "Ollama connection successful."
-        );
-
-
-    } catch (error) {
-
-        console.error(
-            "Ollama connection error:",
-            error
-        );
-
-
-        updateAIStatus(
-            "🔴 Not connected"
-        );
-
-
-        showToast(
-            "Could not connect to Ollama."
-        );
-
-    }
-
-}
-
-
-// ============================================================
-// AI REQUEST
-// ============================================================
-
-let aiController =
-    null;
-
-
-async function sendAIMessage() {
-
-    const input =
-        document.getElementById(
-            "aiInput"
-        );
-
-
-    const message =
-        input.value.trim();
-
-
-    if (!message) {
-
-        return;
-
-    }
-
-
-    const settings =
-        getSettings();
-
-
-    const baseURL =
-        settings.ollamaURL ||
-        DEFAULT_OLLAMA_URL;
-
-
-    const model =
-        settings.ollamaModel ||
-        DEFAULT_OLLAMA_MODEL;
-
-
-    addAIMessage(
-        "user",
-        message
-    );
-
-
-    input.value =
-        "";
-
-
-    updateAIStatus(
-        "🟡 AI is thinking..."
-    );
-
-
-    const assistantElement =
-        addAIMessage(
-            "assistant",
-            "..."
-        );
-
-
-    try {
-
-        aiController =
-            new AbortController();
-
-
-        const response =
-            await fetch(
-                `${baseURL}/api/generate`,
-                {
-                    method:
-                        "POST",
-
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
-
-                    body:
-                        JSON.stringify({
-
-                            model:
-                                model,
-
-                            prompt:
-                                message,
-
-                            stream:
-                                true
-
-                        }),
-
-                    signal:
-                        aiController.signal
-
-                }
-            );
-
-
-        if (!response.ok) {
-
-            throw new Error(
-                `Ollama returned HTTP ${response.status}`
-            );
-
-        }
-
-
-        if (!response.body) {
-
-            throw new Error(
-                "Streaming is not supported by this response."
-            );
-
-        }
-
-
-        const reader =
-            response.body.getReader();
-
-
-        const decoder =
-            new TextDecoder();
-
-
-        let fullText =
-            "";
-
-
-        assistantElement.textContent =
-            "";
-
-
-        while (true) {
-
-            const {
-                value,
-                done
-            } =
-                await reader.read();
-
-
-            if (done) {
-
-                break;
-
-            }
-
-
-            const chunk =
-                decoder.decode(
-                    value,
-                    {
-                        stream:
-                            true
-                    }
-                );
-
-
-            const lines =
-                chunk
-                    .split("\n")
-                    .filter(
-                        line =>
-                            line.trim()
-                    );
-
-
-            for (
-                const line of lines
-            ) {
-
-                try {
-
-                    const data =
-                        JSON.parse(
-                            line
-                        );
-
-
-                    if (
-                        data.response
-                    ) {
-
-                        fullText +=
-                            data.response;
-
-
-                        assistantElement.textContent =
-                            fullText;
-
-                    }
-
-
-                    if (
-                        data.done
-                    ) {
-
-                        break;
-
-                    }
-
-                } catch {
-
-                    // Ignore incomplete JSON chunks.
-
-                }
-
-            }
-
-
-            const container =
-                document.getElementById(
-                    "aiMessages"
-                );
-
-
-            container.scrollTop =
-                container.scrollHeight;
-
-        }
-
-
-        updateAIStatus(
-            "🟢 Ready"
-        );
-
-
-    } catch (error) {
-
-        if (
-            error.name ===
-            "AbortError"
-        ) {
-
-            assistantElement.textContent =
-                "⛔ Response stopped.";
-
-            updateAIStatus(
-                "🟡 Stopped"
-            );
-
-            return;
-
-        }
-
-
-        console.error(
-            "AI Error:",
-            error
-        );
-
-
-        assistantElement.textContent =
-            `❌ AI Error: ${error.message}`;
-
-
-        updateAIStatus(
-            "🔴 AI connection failed"
-        );
-
-    } finally {
-
-        aiController =
-            null;
-
-    }
-
-}
-
-
-// ============================================================
-// STOP AI
-// ============================================================
-
-function stopAI() {
-
-    if (aiController) {
-
-        aiController.abort();
-
-        aiController =
-            null;
-
-    }
-
-}
-
-
-// ============================================================
-// CLEAR AI CHAT
-// ============================================================
-
-function clearAIChat() {
-
-    const messages =
-        document.getElementById(
-            "aiMessages"
-        );
-
-
-    messages.innerHTML = `
-
-        <div class="ai-message assistant">
-
-            <strong>
-                🤖 AI
-            </strong>
-
-            <p>
-                Chat cleared. How can I help?
-            </p>
-
-        </div>
-
-    `;
-
-
-    updateAIStatus(
-        "🟢 Ready"
-    );
 
 }
 
@@ -3598,31 +1401,25 @@ function clearAIChat() {
 
 function router() {
 
-    renderNavigation();
-
-    closeMenu();
+    closeMobileMenu();
 
 
     let route =
         location.hash
-            .replace(
-                "#",
-                ""
-            )
-            .trim();
+            .replace("#", "")
+            .trim()
+            .toLowerCase();
 
 
     if (!route) {
 
-        route =
-            "home";
+        route = "home";
 
     }
 
 
     if (
-        route ===
-        "home"
+        route === "home"
     ) {
 
         renderHome();
@@ -3630,8 +1427,7 @@ function router() {
     }
 
     else if (
-        route ===
-        "register"
+        route === "register"
     ) {
 
         renderRegister();
@@ -3639,8 +1435,7 @@ function router() {
     }
 
     else if (
-        route ===
-        "search"
+        route === "search"
     ) {
 
         renderSearch();
@@ -3648,8 +1443,7 @@ function router() {
     }
 
     else if (
-        route ===
-        "exco"
+        route === "exco"
     ) {
 
         renderExco();
@@ -3657,26 +1451,7 @@ function router() {
     }
 
     else if (
-        route ===
-        "login"
-    ) {
-
-        renderLogin();
-
-    }
-
-    else if (
-        route ===
-        "admin"
-    ) {
-
-        renderAdmin();
-
-    }
-
-    else if (
-        route ===
-        "settings"
+        route === "settings"
     ) {
 
         renderSettings();
@@ -3684,12 +1459,10 @@ function router() {
     }
 
     else if (
-        route.startsWith(
-            "ward-"
-        )
+        route.startsWith("ward-")
     ) {
 
-        const wardId =
+        const id =
             Number(
                 route.replace(
                     "ward-",
@@ -3698,8 +1471,15 @@ function router() {
             );
 
 
-        renderWard(
-            wardId
+        renderHome();
+
+        setTimeout(
+            function() {
+
+                openWard(id);
+
+            },
+            0
         );
 
     }
@@ -3720,179 +1500,10 @@ function router() {
 
 
 // ============================================================
-// MODAL EVENTS
+// START WEBSITE
 // ============================================================
 
-closeModal.addEventListener(
-    "click",
-    () => {
-
-        modal.classList.add(
-            "hidden"
-        );
-
-    }
-);
-
-
-modal.addEventListener(
-    "click",
-    event => {
-
-        if (
-            event.target ===
-            modal
-        ) {
-
-            modal.classList.add(
-                "hidden"
-            );
-
-        }
-
-    }
-);
-
-
-closeAIButton.addEventListener(
-    "click",
-    closeAI
-);
-
-
-aiModal.addEventListener(
-    "click",
-    event => {
-
-        if (
-            event.target ===
-            aiModal
-        ) {
-
-            closeAI();
-
-        }
-
-    }
-);
-
-
-// ============================================================
-// ESCAPE KEY
-// ============================================================
-
-document.addEventListener(
-    "keydown",
-    event => {
-
-        if (
-            event.key ===
-            "Escape"
-        ) {
-
-            modal.classList.add(
-                "hidden"
-            );
-
-            closeAI();
-
-        }
-
-    }
-);
-
-
-// ============================================================
-// MOBILE MENU
-// ============================================================
-
-menuBtn.addEventListener(
-    "click",
-    () => {
-
-        navigation.classList.toggle(
-            "open"
-        );
-
-    }
-);
-
-
-// ============================================================
-// AI BUTTONS
-// ============================================================
-
-document
-    .getElementById(
-        "testAI"
-    )
-    .addEventListener(
-        "click",
-        testAIConnection
-    );
-
-
-document
-    .getElementById(
-        "clearAI"
-    )
-    .addEventListener(
-        "click",
-        clearAIChat
-    );
-
-
-document
-    .getElementById(
-        "stopAI"
-    )
-    .addEventListener(
-        "click",
-        stopAI
-    );
-
-
-document
-    .getElementById(
-        "sendAI"
-    )
-    .addEventListener(
-        "click",
-        sendAIMessage
-    );
-
-
-document
-    .getElementById(
-        "aiInput"
-    )
-    .addEventListener(
-        "keydown",
-        event => {
-
-            if (
-                event.key ===
-                    "Enter" &&
-                !event.shiftKey
-            ) {
-
-                event.preventDefault();
-
-                sendAIMessage();
-
-            }
-
-        }
-    );
-
-
-// ============================================================
-// START APPLICATION
-// ============================================================
-
-initializeSettings();
-
-initializeExcos();
+loadTheme();
 
 window.addEventListener(
     "hashchange",
@@ -3903,10 +1514,4 @@ window.addEventListener(
     "DOMContentLoaded",
     router
 );
-
-
-// Run immediately too,
-// in case the script loads
-// after DOMContentLoaded.
-
-router();
+```
